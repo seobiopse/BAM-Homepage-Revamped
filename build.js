@@ -174,47 +174,81 @@ function compileUnifiedSchema(pageType, pageData) {
     };
 }
 
-// Programmatic Semantic Guide Builder to scale page content length to 1000+ words
-function compileSemanticGuide(cat) {
-    const name = cat.name;
-    const isLanyard = name.toLowerCase().includes('lanyard');
-    const isMachine = name.toLowerCase().includes('machine');
-    const isBadge = name.toLowerCase().includes('badge');
+// Programmatic Semantic Guide Builder to scale category page content length to 1000+ words
+function compileCategorySemanticGuide(cat) {
+    const categoryName = cat.name;
+    const count = cat.products.length;
 
-    let specificText = '';
-    if (isLanyard) {
-        specificText = `When ordering custom lanyards, width selection is key for legibility and comfort. We offer 10mm, 15mm, 20mm, and 25mm polyester and woven options. Our default safety breakaway clips snap open under tension to prevent choking hazards in hospital, retail, or warehouse zones.`;
-    } else if (isMachine) {
-        specificText = `Our industrial button maker machines are machined from high-grade carbon steel with robust alloy dies. Ideal for school fundraisers, corporate marketing, and retail merchandising, each machine supports interchangeable dies to stamp 25mm, 32mm, or 57mm pins.`;
-    } else if (isBadge) {
-        specificText = `Every personalized name badge is available with dual neodymium magnets or heavy-duty safety pins. The double magnetic backing clamps tightly without damaging shirt threads, making it the perfect option for corporate attire, though employees with pacemakers should utilize traditional pins.`;
-    } else {
-        specificText = `Our premium commercial signage and identification collections are manufactured to strict industrial standards to ensure high legibility and scanability in professional reception desks, administrative suites, or business boardrooms.`;
-    }
+    // 1. Calculate starting price
+    let minPrice = Infinity;
+    cat.products.forEach(pRef => {
+        const prod = ProductCatalog.products[pRef.id];
+        if (prod && prod.basePrice < minPrice) {
+            minPrice = prod.basePrice;
+        }
+    });
+    const startingPrice = minPrice !== Infinity ? `$${minPrice.toFixed(2)}` : 'wholesale rates';
+
+    // 2. Gather unique shapes/dimensions
+    const shapesSet = new Set();
+    const materialsSet = new Set();
+    let durability = '3-5 years';
+
+    cat.products.forEach(pRef => {
+        const prod = ProductCatalog.products[pRef.id];
+        if (prod) {
+            prod.specs.forEach(spec => {
+                if (spec[0].toLowerCase().includes('dimension') || spec[0].toLowerCase().includes('shape') || spec[0].toLowerCase().includes('size')) {
+                    shapesSet.add(spec[1]);
+                }
+                if (spec[0].toLowerCase().includes('material') || spec[0].toLowerCase().includes('substrate') || spec[0].toLowerCase().includes('composition') || spec[0].toLowerCase().includes('base')) {
+                    materialsSet.add(spec[1]);
+                }
+            });
+            if (prod.specs.some(s => s[1].toLowerCase().includes('5+ years') || s[1].toLowerCase().includes('durability'))) {
+                durability = '5+ years';
+            }
+        }
+    });
+
+    const shapes = shapesSet.size > 0 ? Array.from(shapesSet).join(', ') : 'custom shapes and dimensions';
+    const materials = materialsSet.size > 0 ? Array.from(materialsSet).join(', ') : 'commercial-grade substrates';
+
+    // 3. Compile product list with prices and USPs
+    let productListHtml = '';
+    cat.products.forEach(pRef => {
+        const prod = ProductCatalog.products[pRef.id];
+        if (prod) {
+            productListHtml += `
+                <li style="margin-bottom: 8px;">
+                    <strong>${prod.name}</strong> (${prod.priceRange}): ${prod.description}
+                </li>`;
+        }
+    });
 
     return `
     <div class="seo-semantic-guide" style="margin-top: 40px; border-top: 1px solid var(--color-border); padding-top: 40px; text-align: left;">
-        <h3 style="font-size: 1.4rem; color: var(--color-secondary); margin-bottom: 16px;">Comprehensive B2B Ordering &amp; Specifications Guide</h3>
+        <h3 style="font-size: 1.4rem; color: var(--color-secondary); margin-bottom: 16px;">Comprehensive B2B Procurement &amp; Technical Specifications for ${categoryName}</h3>
         
         <div class="guide-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 24px;">
             <div class="guide-col">
-                <h4 style="font-size: 1.05rem; color: var(--color-secondary); margin-bottom: 10px;">1. Professional Manufacture &amp; Material Specs</h4>
+                <h4 style="font-size: 1.05rem; color: var(--color-secondary); margin-bottom: 10px;">1. Material Composition &amp; Production Specs</h4>
                 <p style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6; margin-bottom: 14px;">
-                    At BadgeStore Australia, our corporate badges and identification items are crafted using commercial-grade raw materials. ${specificText} Laser engraving utilizes precise CO2 lasers for crisp, high-contrast borders and lettering, while full-color prints are protected under scratch-resistant domes.
+                    At BadgeStore Australia, our <strong>${categoryName}</strong> collection is engineered to commercial-grade standards. Options in this range start from <strong>${startingPrice}</strong> and feature diverse physical configurations. Available shapes and form factors include <strong>${shapes}</strong>.
                 </p>
                 <p style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6;">
-                    Wood products are finished using organic Adelaide beeswax to bring out natural mahogany and walnut timber grains. Anodised metals and acrylic plates utilize UV-resistant inks preventing color degradation over time under direct exposure.
+                    Each product variant is built using specialized materials such as <strong>${materials}</strong>. Our manufacturing processes utilize precise laser engraving, high-resolution digital prints, and optional protective polyurethane domed lenses to ensure durability of at least <strong>${durability}</strong> under standard commercial wear.
                 </p>
             </div>
             
             <div class="guide-col">
-                <h4 style="font-size: 1.05rem; color: var(--color-secondary); margin-bottom: 10px;">2. Corporate Purchase Orders &amp; Invoicing</h4>
+                <h4 style="font-size: 1.05rem; color: var(--color-secondary); margin-bottom: 10px;">2. Programmatic Product Catalog &amp; Unique USPs</h4>
                 <p style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6; margin-bottom: 14px;">
-                    We support streamlined accounts workflows for larger enterprises and public institutions. BadgeStore accepts official Purchase Orders (PO) with net-30 billing cycles from Australian schools, hospitals, local councils, and federal government offices.
+                    This category contains <strong>${count}</strong> premium product styles. Below is a detailed breakdown of the variants and their unique selling propositions (USPs):
                 </p>
-                <p style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6;">
-                    Our programmatic static database supports bulk pricing scaling. Simply select your wholesale tiers during configuration, or submit an email query to our support desk for custom franchise quotes.
-                </p>
+                <ul style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6; padding-left: 20px; margin-bottom: 14px;">
+                    ${productListHtml}
+                </ul>
             </div>
         </div>
 
@@ -222,7 +256,7 @@ function compileSemanticGuide(cat) {
             <div class="guide-col">
                 <h4 style="font-size: 1.05rem; color: var(--color-secondary); margin-bottom: 10px;">3. Safety Compliance &amp; Attachment Options</h4>
                 <p style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6;">
-                    Safety is paramount in busy team environments. Neodymium magnets offer high clamping force without damaging garments, but traditional pins, pocket alligator clips, and swivel loops are also provided as secure alternatives. Safety breakaway neck clips are pre-fitted on all custom lanyards to ensure immediate release under sudden tension.
+                    For wearable options in the ${categoryName} category, fastening integrity is paramount. Magnetic attachments utilize dual neodymium magnetic backplates that hold secure through suit lapels and activewear without puncturing delicate fabric threads. Where magnetic fields are restricted, we offer traditional safety pins, rotatable bulldog pocket clips, and breakaway neck straps to guarantee worker safety and compliance under load.
                 </p>
             </div>
             
@@ -230,6 +264,101 @@ function compileSemanticGuide(cat) {
                 <h4 style="font-size: 1.05rem; color: var(--color-secondary); margin-bottom: 10px;">4. Adelaide Local Dispatch &amp; Logistics</h4>
                 <p style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6;">
                     Orders are manufactured and dispatched from our local facility in Prospect, South Australia. Deliveries are processed through Australia Post and local couriers. Timelines exclude Sundays: Local Adelaide Metro (1-2 days priority, 2-3 days standard), East Coast Metro (2-3 days express, 4-5 days standard), and Remote WA/NT/TAS (3-5 days express, 6-8 days standard).
+                </p>
+            </div>
+        </div>
+    </div>
+    `;
+}
+
+// Programmatic Semantic Guide Builder to scale product page content length to 1000+ words
+function compileProductSemanticGuide(prod) {
+    const productName = prod.name;
+    const productSku = prod.sku || 'BAS-' + prod.id.substring(0,6).toUpperCase();
+    const productDescription = prod.description;
+
+    // 1. Gather specs bullet points
+    let specsBullets = '';
+    prod.specs.forEach(spec => {
+        specsBullets += `
+            <li style="margin-bottom: 6px;">
+                <strong>${spec[0]}:</strong> ${spec[1]}
+            </li>`;
+    });
+
+    // 2. Generate price bracket table rows
+    let priceTableRows = '';
+    prod.priceBrackets.forEach(bracket => {
+        const qtyLabel = bracket.max === 9999 ? `${bracket.min}+ units` : `${bracket.min} - ${bracket.max} units`;
+        const unitPrice = bracket.price.toFixed(2);
+        const discountPct = prod.basePrice > 0 ? Math.round((1 - bracket.price / prod.basePrice) * 100) : 0;
+        const discountLabel = discountPct > 0 ? `${discountPct}% Off` : 'Base Price';
+        priceTableRows += `
+            <tr style="border-bottom: 1px solid var(--color-border);">
+                <td style="padding: 8px; text-align: left;">${qtyLabel}</td>
+                <td style="padding: 8px; text-align: right; font-weight: 700;">$${unitPrice}</td>
+                <td style="padding: 8px; text-align: right; color: var(--color-primary); font-weight: 700;">${discountLabel}</td>
+            </tr>`;
+    });
+
+    return `
+    <div class="product-seo-guide" style="margin-top: 40px; border-top: 1px solid var(--color-border); padding-top: 40px; text-align: left; clear: both;">
+        <h3 style="font-size: 1.4rem; color: var(--color-secondary); margin-bottom: 16px;">Procurement &amp; Technical Specifications Guide for ${productName}</h3>
+        
+        <div class="guide-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 24px;">
+            <div class="guide-col">
+                <h4 style="font-size: 1.05rem; color: var(--color-secondary); margin-bottom: 10px;">Product Specifications &amp; Material Quality</h4>
+                <p style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6; margin-bottom: 14px;">
+                    The <strong>${productName}</strong> (SKU: <code>${productSku}</code>) is manufactured using high-grade, durable substrates to meet strict commercial benchmarks. It features the following physical attributes:
+                </p>
+                <ul style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6; padding-left: 20px; margin-bottom: 14px;">
+                    ${specsBullets}
+                </ul>
+                <p style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6;">
+                    <strong>Unique Selling Proposition (USP):</strong> ${productDescription}
+                </p>
+            </div>
+            
+            <div class="guide-col">
+                <h4 style="font-size: 1.05rem; color: var(--color-secondary); margin-bottom: 10px;">B2B Wholesale Quantity Pricing Tiers</h4>
+                <p style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6; margin-bottom: 14px;">
+                    To support corporate buyers and franchise orders, we offer structured bulk pricing. The wholesale price tiers for <strong>${productName}</strong> are detailed below:
+                </p>
+                <div class="table-wrap" style="margin-bottom: 14px; border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); overflow: hidden;">
+                    <table style="width: 100%; font-size: 0.85rem; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background-color: var(--color-secondary); color: #FFF;">
+                                <th style="padding: 8px; text-align: left;">Order Quantity</th>
+                                <th style="padding: 8px; text-align: right;">Unit Price (AUD)</th>
+                                <th style="padding: 8px; text-align: right;">Discount Level</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${priceTableRows}
+                        </tbody>
+                    </table>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--color-text-muted); line-height: 1.5;">
+                    * Pricing scales automatically inside the interactive configurator as you adjust quantities. Tax invoice details and BSB transfers are provided on checkout completion.
+                </p>
+            </div>
+        </div>
+
+        <div class="guide-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+            <div class="guide-col">
+                <h4 style="font-size: 1.05rem; color: var(--color-secondary); margin-bottom: 10px;">Fastening Systems &amp; Garment Safety</h4>
+                <p style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6;">
+                    Where applicable, we provide multiple attachment choices. Our damage-free magnetic fasteners utilize dual neodymium discs that sandwich fabric layers without puncturing threads. This holds firmly on heavy corporate suit jackets and premium silk blouses. Low-cost safety pin alternatives or rotatable bulldog clips are available for specialized industrial or medical safety environments.
+                </p>
+            </div>
+            
+            <div class="guide-col">
+                <h4 style="font-size: 1.05rem; color: var(--color-secondary); margin-bottom: 10px;">Corporate Account Setup &amp; Dispatch Logistics</h4>
+                <p style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6; margin-bottom: 14px;">
+                    For hospitals, councils, school departments, and corporate offices, BadgeStore Australia supports official Purchase Orders (PO) with net-30 billing cycles. 
+                </p>
+                <p style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6;">
+                    All items are custom-finished at our Adelaide facility in Prospect, South Australia. We ship nationally via Australia Post. Standard transit estimates display inside the shipping estimator below the designer tool.
                 </p>
             </div>
         </div>
@@ -716,7 +845,7 @@ Object.keys(ProductCatalog.categories).forEach(catKey => {
 
     // SEO Rich Article + Semantic B2B specifications guide (scaling word count past 1000 words)
     let seoArticleHtml = redesignCategoryDesc(cat, '../');
-    seoArticleHtml += compileSemanticGuide(cat);
+    seoArticleHtml += compileCategorySemanticGuide(cat);
     html = html.replace(/{{seoArticle}}/g, seoArticleHtml);
 
     // Comparison Table
@@ -1247,6 +1376,7 @@ Object.keys(ProductCatalog.products).forEach(prodKey => {
 
     html = html.replace(/{{formControls}}/g, formControlsHtml);
     html = html.replace(/{{previewerMarkup}}/g, previewerMarkupHtml);
+    html = html.replace(/{{productSemanticGuide}}/g, compileProductSemanticGuide(prod));
 
     // Dynamic Unified Schema Graph (Organization + LocalBusiness + FAQPage + Product)
     const unifiedSchema = compileUnifiedSchema('product', prod);
