@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Name Badges Australia | Badge Store Redesign</title>
+    <meta name="description" content="Buy Custom Name Badges Online in Australia. Premium engraved, domed, wood, and metal name badges. Fast turnaround, no minimum orders, and damage-free magnetic attachments.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/style.css?v=2">
+    
+    <!-- Unified JSON-LD Schema Graph -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://www.badgestore.com.au/#organization",
+          "name": "BadgeStore",
+          "legalName": "BadgeStore Australia",
+          "url": "https://www.badgestore.com.au/",
+          "logo": "https://cdn11.bigcommerce.com/s-5ghsl7hcw4/content/img/badgestore logo new-01.svg",
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+61-1300-862-637",
+            "contactType": "customer service",
+            "email": "admin@badgestore.com.au",
+            "areaServed": "AU",
+            "availableLanguage": "en"
+          }
+        },
+        {
+          "@type": "LocalBusiness",
+          "@id": "https://www.badgestore.com.au/#localbusiness",
+          "name": "BadgeStore Office",
+          "image": "https://cdn11.bigcommerce.com/s-5ghsl7hcw4/images/stencil/original/carousel/18/banner-3.jpg",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "56 Prospect Rd",
+            "addressLocality": "Prospect",
+            "addressRegion": "SA",
+            "postalCode": "5082",
+            "addressCountry": "AU"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": -34.8912,
+            "longitude": 138.5991
+          },
+          "telephone": "1300862637"
+        },
+        {
+          "@type": "MerchantReturnPolicy",
+          "@id": "https://www.badgestore.com.au/#returnpolicy",
+          "name": "BadgeStore Returns Policy",
+          "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnPeriod",
+          "merchantReturnDays": 30,
+          "returnMethod": "https://schema.org/ReturnByMail",
+          "refundType": "https://schema.org/RefundFull"
+        },
+        {
+          "@type": "ShippingRateSettings",
+          "@id": "https://www.badgestore.com.au/#shippingpolicy",
+          "name": "Standard Shipping Flat Rate",
+          "freeShippingThreshold": {
+            "@type": "MonetaryAmount",
+            "value": 100,
+            "currency": "AUD"
+          },
+          "shippingRate": {
+            "@type": "MonetaryAmount",
+            "value": 12.50,
+            "currency": "AUD"
+          }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+
+    <!-- Announcement Bar -->
+    <div class="announcement-bar">
+        <div class="announcement-content">
+            <span class="badge-alert">Notice</span>
+            <p>We are moving to new premises! Place orders as usual. Phone lines resume next week.</p>
+        </div>
+        <div class="announcement-contact">
+            <a href="tel:1300862637">Call us: 1300 862 637</a>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="main-header" role="banner">
+        <div class="header-container">
+            <a href="index.html" class="logo-area">
+                <img src="https://cdn11.bigcommerce.com/s-5ghsl7hcw4/content/img/badgestore%20logo%20new-01.svg" alt="BadgeStore" class="header-logo-img">
+            </a>
+
+            <!-- Mobile Hamburger Button -->
+            <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle Navigation" aria-expanded="false" aria-controls="mobile-drawer">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+
+            <!-- Navigation Menu dropdown list -->
+            {{navMenu}}
+
+            <!-- Quick Utilities -->
+            <div class="header-utilities">
+                <button class="util-btn search-trigger" aria-label="Search" aria-haspopup="dialog" aria-expanded="false">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </button>
+                <a href="#" class="util-btn account-link" aria-label="Account">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </a>
+                <a href="#" class="cart-badge-trigger" aria-label="Shopping Cart">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    <span class="cart-count">0</span>
+                </a>
+                <a href="#designer" class="btn btn-primary header-cta-btn">DIY Badges</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Drawer Menu -->
+    <div class="mobile-drawer" id="mobile-drawer" aria-hidden="true">
+        {{mobileNavMenu}}
+    </div>
+
+    <main id="main-content" role="main">
+        <!-- Hero Section with Configurator -->
+        <section class="hero-section" aria-labelledby="main-seo-heading">
+            <div class="hero-container">
+                <div class="hero-intro">
+                    <div class="trust-badge-pill">
+                        <svg class="star-icon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="#EAB308"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        <span>Top Engraver in Australia (4.9 Rating)</span>
+                    </div>
+                    <!-- SINGLE H1 HEADING FOR SEO/AEO CRAWLING -->
+                    <h1 id="main-seo-heading">Australia's Trusted Supplier of Custom Name Badges</h1>
+                    <p class="hero-desc">Elevate your brand with premium personalised name badges. Whether you need elegant laser-engraved metal, crystal-clear acrylic doming, or natural sustainable hardwoods, we deliver perfection with no minimum orders.</p>
+                    
+                    <div class="hero-buttons">
+                        <a href="#designer" class="btn btn-primary btn-large">Launch Interactive Designer</a>
+                        <a href="#categories" class="btn btn-secondary btn-large">Browse Badge Catalog</a>
+                    </div>
+
+                    <div class="hero-trust-metrics">
+                        <div class="metric-item">
+                            <strong>100%</strong>
+                            <span>Aussie Made</span>
+                        </div>
+                        <div class="metric-item">
+                            <strong>No Min</strong>
+                            <span>Order Quantities</span>
+                        </div>
+                        <div class="metric-item">
+                            <strong>Fast</strong>
+                            <span>Express Shipping</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configurator Hero Card -->
+                <div id="designer" class="hero-widget-card" aria-label="Multi-Product Customizer">
+                    <div class="hero-designer-tabs" role="tablist" aria-label="Select product to customize">
+                        <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="controls-badge" data-tab="badge" type="button">Name Badge</button>
+                        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="controls-desk-plate" data-tab="desk-plate" type="button">Desk Plate</button>
+                        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="controls-plaque" data-tab="plaque" type="button">Plaque</button>
+                        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="controls-id-card" data-tab="id-card" type="button">ID Card</button>
+                        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="controls-pet-tag" data-tab="pet-tag" type="button">Pet Tag</button>
+                    </div>
+                    
+                    <!-- Display Area -->
+                    <div class="badge-canvas-container" style="background:#FFF;">
+                        <div id="live-badge" class="badge-preview-box skin-silver-metal has-border" aria-label="Visual Badge Previewer" style="width:300px; height:130px; box-shadow: 0 8px 16px rgba(0,0,0,0.06);">
+                            <div class="badge-inner-shadow"></div>
+                            <div class="badge-texture"></div>
+                            
+                            <div class="badge-layout-grid">
+                                <div class="badge-logo-holder">
+                                    <svg viewBox="0 0 100 100" width="38" height="38" id="badge-preview-logo" style="color:var(--color-secondary);">
+                                        <path fill="currentColor" d="M50 10 L85 30 L85 70 L50 90 L15 70 L15 30 Z" />
+                                        <path fill="#FFFFFF" d="M35 40 L65 40 L65 50 L35 50 Z M35 60 L65 60 L65 65 L35 65 Z" />
+                                    </svg>
+                                </div>
+                                <div class="badge-text-holder">
+                                    <div id="preview-name" class="preview-text-name">YOUR NAME HERE</div>
+                                    <div id="preview-title" class="preview-text-title">Job Title or Department</div>
+                                </div>
+                            </div>
+                            
+                            <div class="fastener-indicator">
+                                <span class="indicator-dot"></span>
+                                <span id="fastener-type-label">Magnetic Fastener Attached</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel Controls for Name Badge -->
+                    <div id="controls-badge" class="config-controls tab-content active">
+                        <div class="config-row">
+                            <div class="input-group">
+                                <label for="employee-name-badge">Name on Badge</label>
+                                <input type="text" id="employee-name-badge" placeholder="E.g. Leslie Alexander" maxlength="28" class="badge-input-sync">
+                            </div>
+                            <div class="input-group">
+                                <label for="employee-title-badge">Job Title / Department</label>
+                                <input type="text" id="employee-title-badge" placeholder="E.g. Project Manager" maxlength="35" class="badge-input-sync">
+                            </div>
+                        </div>
+
+                        <div class="config-row">
+                            <div class="input-group">
+                                <span class="label-heading-simulate">Badge Material</span>
+                                <div class="material-grid">
+                                    <button class="material-btn active" data-skin="skin-silver-metal" data-logo-color="#231F20" type="button" aria-label="Brushed silver">
+                                        <span class="color-sample metal-silver"></span>
+                                        <span>Silver Metal</span>
+                                    </button>
+                                    <button class="material-btn" data-skin="skin-gold-metal" data-logo-color="#854D0E" type="button" aria-label="Brushed gold">
+                                        <span class="color-sample metal-gold"></span>
+                                        <span>Gold Metal</span>
+                                    </button>
+                                    <button class="material-btn" data-skin="skin-mahogany-wood" data-logo-color="#451A03" type="button" aria-label="Mahogany wood">
+                                        <span class="color-sample wood-mahogany"></span>
+                                        <span>Mahogany</span>
+                                    </button>
+                                    <button class="material-btn" data-skin="skin-white-domed" data-logo-color="#ED1C24" type="button" aria-label="White Domed">
+                                        <span class="color-sample acrylic-white"></span>
+                                        <span>White Domed</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="config-row">
+                            <div class="input-group-checkbox">
+                                <span class="option-title">Fastening Attachment</span>
+                                <div class="toggle-option-grid">
+                                    <label class="toggle-option">
+                                        <input type="radio" name="fastener-badge" value="magnetic" checked>
+                                        <div class="toggle-card">
+                                            <strong>Magnetic (Premium)</strong>
+                                            <span>No clothing pinholes</span>
+                                        </div>
+                                    </label>
+                                    <label class="toggle-option">
+                                        <input type="radio" name="fastener-badge" value="pin">
+                                        <div class="toggle-card">
+                                            <strong>Safety Pin</strong>
+                                            <span>Traditional fit</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="config-row config-footer-actions">
+                            <div class="toggle-border-wrap">
+                                <label class="switch-container">
+                                    <input type="checkbox" id="toggle-border-badge" checked>
+                                    <span class="slider-switch"></span>
+                                    <span class="visually-hidden">Include outer borders</span>
+                                </label>
+                                <span class="switch-label">Include Outer Border</span>
+                            </div>
+                            <button class="btn btn-primary add-hero-badge-btn" type="button">Add Custom Badge - $15.00</button>
+                        </div>
+                    </div>
+
+                    <!-- Panel Controls for Desk Plate -->
+                    <div id="controls-desk-plate" class="config-controls tab-content" style="display:none;">
+                        <div class="config-row">
+                            <div class="input-group">
+                                <label for="employee-name-desk">Line 1 Text</label>
+                                <input type="text" id="employee-name-desk" placeholder="E.g. Leslie Alexander" maxlength="28" class="badge-input-sync">
+                            </div>
+                            <div class="input-group">
+                                <label for="employee-title-desk">Line 2 Text</label>
+                                <input type="text" id="employee-title-desk" placeholder="E.g. Managing Director" maxlength="35" class="badge-input-sync">
+                            </div>
+                        </div>
+                        <div class="config-row">
+                            <div class="input-group">
+                                <span class="label-heading-simulate">Base Vibe</span>
+                                <div class="toggle-option-grid">
+                                    <label class="toggle-option">
+                                        <input type="radio" name="base-style-desk" value="wood-base" checked>
+                                        <div class="toggle-card">
+                                            <strong>Solid Walnut block</strong>
+                                            <span>Organic executive feel</span>
+                                        </div>
+                                    </label>
+                                    <label class="toggle-option">
+                                        <input type="radio" name="base-style-desk" value="metal-base">
+                                        <div class="toggle-card">
+                                            <strong>Aluminium Track</strong>
+                                            <span>Sleek modern channel</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="config-row config-footer-actions">
+                            <div></div>
+                            <button class="btn btn-primary add-hero-badge-btn" type="button">Add Desk Plate - $39.00</button>
+                        </div>
+                    </div>
+
+                    <!-- Panel Controls for Plaque -->
+                    <div id="controls-plaque" class="config-controls tab-content" style="display:none;">
+                        <div class="config-row">
+                            <div class="input-group">
+                                <label for="employee-name-plaque">Main Heading</label>
+                                <input type="text" id="employee-name-plaque" placeholder="E.g. IN COMMEMORATION" value="IN COMMEMORATION" maxlength="30" class="badge-input-sync">
+                            </div>
+                        </div>
+                        <div class="config-row">
+                            <div class="input-group">
+                                <label for="employee-title-plaque">Engraving Details</label>
+                                <textarea id="employee-title-plaque" rows="2" style="padding:10px; border:1px solid var(--color-border); border-radius:var(--border-radius-sm); font-size:0.9rem; font-family:inherit; outline:none; resize:none;" class="badge-input-sync">Engraved Text Details Here</textarea>
+                            </div>
+                        </div>
+                        <div class="config-row config-footer-actions">
+                            <div class="toggle-border-wrap">
+                                <label class="switch-container">
+                                    <input type="checkbox" id="toggle-screws-plaque" checked>
+                                    <span class="slider-switch"></span>
+                                    <span class="visually-hidden">Include screw holes</span>
+                                </label>
+                                <span class="switch-label">Corner Screw Holes</span>
+                            </div>
+                            <button class="btn btn-primary add-hero-badge-btn" type="button">Add Plaque - $120.00</button>
+                        </div>
+                    </div>
+
+                    <!-- Panel Controls for ID Card -->
+                    <div id="controls-id-card" class="config-controls tab-content" style="display:none;">
+                        <div class="config-row">
+                            <div class="input-group">
+                                <label for="employee-name-id">Employee Name</label>
+                                <input type="text" id="employee-name-id" placeholder="E.g. Leslie Alexander" maxlength="28" class="badge-input-sync">
+                            </div>
+                            <div class="input-group">
+                                <label for="employee-title-id">Department / ID</label>
+                                <input type="text" id="employee-title-id" placeholder="E.g. OPERATIONS" maxlength="30" class="badge-input-sync">
+                            </div>
+                        </div>
+                        <div class="config-row">
+                            <div class="input-group">
+                                <label for="photo-upload-id">Employee Photo</label>
+                                <input type="file" id="photo-upload-id" accept=".png,.jpg,.jpeg">
+                            </div>
+                        </div>
+                        <div class="config-row config-footer-actions">
+                            <div></div>
+                            <button class="btn btn-primary add-hero-badge-btn" type="button">Add ID Card - $8.00</button>
+                        </div>
+                    </div>
+
+                    <!-- Panel Controls for Pet Tag -->
+                    <div id="controls-pet-tag" class="config-controls tab-content" style="display:none;">
+                        <div class="config-row">
+                            <div class="input-group">
+                                <label for="employee-name-tag">Pet Name (Front)</label>
+                                <input type="text" id="employee-name-tag" placeholder="E.g. FIDO" maxlength="12" class="badge-input-sync">
+                            </div>
+                            <div class="input-group">
+                                <label for="employee-title-tag">Contact Details (Back)</label>
+                                <input type="text" id="employee-title-tag" placeholder="E.g. Call: 0412 345 678" maxlength="20" class="badge-input-sync">
+                            </div>
+                        </div>
+                        <div class="config-row config-footer-actions">
+                            <div></div>
+                            <button class="btn btn-primary add-hero-badge-btn" type="button">Add Pet Tag - $12.00</button>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- CLOSE hero-container -->
+        </section> <!-- CLOSE hero-section -->
+
+        <!-- Value Propositions (STACKED FULL WIDTH) -->
+        <section class="value-props-section" aria-label="Why choose BadgeStore">
+            <div class="section-container">
+                <div class="section-header text-center" style="margin-bottom: 40px; text-align: center;">
+                    <h2>Why Aussie Businesses Choose BadgeStore</h2>
+                    <p style="color: var(--color-text-muted); margin-top: 10px;">Premium local craftsmanship with convenient delivery options and no minimums.</p>
+                </div>
+                <div class="props-grid">
+                    <div class="prop-card">
+                        <div class="prop-icon-bg">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+                        <h3>Australian Made & Owned</h3>
+                        <p>We manufacture name badges locally, supporting Australian jobs and ensuring swift craftsmanship.</p>
+                    </div>
+                    <div class="prop-card">
+                        <div class="prop-icon-bg">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a6 6 0 1 1-8.485-8.485l4.243-4.243m0 0a6 6 0 1 1 8.485 8.485L13.414 20.9"/></svg>
+                        </div>
+                        <h3>Damage-Free Magnetics</h3>
+                        <p>Our powerful magnetic backings clamp securely to clothing without punching pinholes in garments.</p>
+                    </div>
+                    <div class="prop-card">
+                        <div class="prop-icon-bg">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+                        </div>
+                        <h3>No Minimum Quantity</h3>
+                        <p>Order a single replacement name tag for a new hire, or bulk badges for your entire enterprise franchise.</p>
+                    </div>
+                    <div class="prop-card">
+                        <div class="prop-icon-bg">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                        </div>
+                        <h3>Express Post Shipping</h3>
+                        <p>Fast dispatch Australia-wide. Express delivery directly to your office in Melbourne, Sydney, Perth, and Brisbane.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories Grid (STACKED FULL WIDTH) -->
+        <section id="categories" class="categories-section" aria-labelledby="cat-heading">
+            <div class="section-container">
+                <div class="section-header" style="text-align: center; margin-bottom: 50px;">
+                    <h2 id="cat-heading">Explore Our Premium Collections</h2>
+                    <p style="color: var(--color-text-muted); margin-top: 10px;">Select a specialized category designed for durability, scanability, and corporate styling.</p>
+                </div>
+                
+                <div class="categories-grid">
+                    {{categoryGrid}}
+                </div>
+            </div>
+        </section>
+
+        <!-- Bulk Price Calculator (STACKED FULL WIDTH) -->
+        <section class="calculator-section" aria-labelledby="calc-heading">
+            <div class="section-container">
+                <div class="calc-layout-vertical">
+                    <div class="calc-info">
+                        <h2 id="calc-heading">Calculate Bulk Corporate Discounts</h2>
+                        <p>Ordering for a large team or franchise? We offer tier-based wholesale pricing. Slide the controller to check your savings instantly!</p>
+                        
+                        <div class="wholesale-tiers" aria-label="Wholesale pricing brackets">
+                            <div class="tier-badge">1 - 9 Units: $15.00 ea</div>
+                            <div class="tier-badge active-tier">10 - 49 Units: $12.50 ea</div>
+                            <div class="tier-badge">50 - 99 Units: $9.90 ea</div>
+                            <div class="tier-badge">100+ Units: $7.50 ea</div>
+                        </div>
+                    </div>
+
+                    <div class="calc-widget" aria-label="Pricing Slider Input Box" style="margin-top: 30px;">
+                        <div class="widget-row">
+                            <label for="badge-quantity-slider">Number of Name Badges Needed:</label>
+                            <div class="range-slider-wrap">
+                                <input type="range" id="badge-quantity-slider" min="1" max="250" value="25" class="slider" aria-label="Quantity range slider">
+                                <div class="quantity-bubble" id="qty-val">25</div>
+                            </div>
+                        </div>
+
+                        <div class="widget-row price-summary-grid">
+                            <div class="summary-box">
+                                <span>Unit Price</span>
+                                <strong id="calc-unit-price">$12.50</strong>
+                            </div>
+                            <div class="summary-box">
+                                <span>Total Savings</span>
+                                <strong class="text-green" id="calc-savings">$62.50</strong>
+                            </div>
+                            <div class="summary-box primary-box">
+                                <span>Estimated Total</span>
+                                <strong id="calc-total-cost">$312.50</strong>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary btn-full" type="button">Submit Purchase Order Query</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Postcode Delivery Calculator (STACKED FULL WIDTH) -->
+        <section class="postcode-section" aria-labelledby="postcode-heading">
+            <div class="section-container">
+                <div class="postcode-layout-vertical">
+                    <div class="calc-info">
+                        <h2 id="postcode-heading">Check Delivery Times In Australia</h2>
+                        <p>Enter your postcode below to estimate exact transit delivery windows and estimated arrival dates for standard and express shipping.</p>
+                        
+                        <div class="zone-info-cards">
+                            <div class="zone-indicator">
+                                <strong>Local SA (5000-5999)</strong>
+                                <span>Priority: 1d | Express: 1-2d | Standard: 2-3d</span>
+                            </div>
+                            <div class="zone-indicator">
+                                <strong>East Coast Metro</strong>
+                                <span>Priority: 1-2d | Express: 2-3d | Standard: 4-5d</span>
+                            </div>
+                            <div class="zone-indicator">
+                                <strong>Regional &amp; Remote</strong>
+                                <span>Priority: 2-3d | Express: 3-5d | Standard: 6-8d</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="calc-widget" aria-label="Postcode transit calculations" style="margin-top: 30px;">
+                        <div class="widget-row">
+                            <label for="postcode-input">Enter 4-Digit Postcode:</label>
+                            <div class="postcode-input-row">
+                                <input type="text" id="postcode-input" placeholder="E.g. 5000" maxlength="4" pattern="\d{4}">
+                                <button id="postcode-calc-btn" class="btn btn-primary" type="button">Estimate Delivery</button>
+                            </div>
+                            <span id="postcode-error" class="error-text" style="display: none;">Please enter a valid 4-digit Australian postcode.</span>
+                        </div>
+
+                        <!-- Calculated Results Area -->
+                        <div id="postcode-results" class="postcode-results-area" style="display: none;">
+                            <h4 class="results-title">Estimated Arrival Dates:</h4>
+                            <div class="delivery-results-list">
+                                <div class="delivery-result-card">
+                                    <strong>Standard Post</strong>
+                                    <span class="transit-days" id="standard-days">Standard Post (4-5 Days)</span>
+                                    <span class="arrival-date" id="standard-arrival">Arrives: --</span>
+                                </div>
+                                <div class="delivery-result-card highlight-express">
+                                    <strong>Express Post</strong>
+                                    <span class="transit-days" id="express-days">Express Post (2-3 Days)</span>
+                                    <span class="arrival-date" id="express-arrival">Arrives: --</span>
+                                </div>
+                                <div class="delivery-result-card">
+                                    <strong>Priority Dispatch</strong>
+                                    <span class="transit-days" id="priority-days">Priority Dispatch (1-2 Days)</span>
+                                    <span class="arrival-date" id="priority-arrival">Arrives: --</span>
+                                </div>
+                            </div>
+                            <small class="results-disclaimer">*Deliveries exclude Sundays. Orders dispatched from Prospect, SA.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Customer Testimonials (STACKED FULL WIDTH) -->
+        <section class="reviews-section" aria-labelledby="reviews-heading">
+            <div class="section-container">
+                <div class="section-header" style="text-align: center; margin-bottom: 40px;">
+                    <h2 id="reviews-heading">Loved By Thousands of Aussie Brands</h2>
+                    <p style="color: var(--color-text-muted); margin-top: 10px;">Read honest reviews left by company operations, human resource managers, and store owners.</p>
+                </div>
+
+                <div class="testimonials-slider">
+                    <div class="testimonial-card">
+                        <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+                        <p class="quote">"BadgeStore has been supplying our Sydney clinic with magnetic name tags for 3 years. They look extremely professional, never fall off, and the acrylic dome keeps them scratch-free."</p>
+                        <div class="reviewer-meta">
+                            <strong>Dr. Marcus Brody</strong>
+                            <span>Operations Director, Brody Medical</span>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+                        <p class="quote">"Outstanding turnaround time. Ordered 75 mahogany wooden badges on Tuesday, and they arrived engraved at our Melbourne cafe by Friday morning. Incredible quality."</p>
+                        <div class="reviewer-meta">
+                            <strong>Sarah Jenkins</strong>
+                            <span>Owner, The Daily Grind</span>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+                        <p class="quote">"No minimum order limits are a lifesaver. Being able to order just 1 replacement badge when we hire a new team member ensures our brand uniform is always complete."</p>
+                        <div class="reviewer-meta">
+                            <strong>Jenny Wilson</strong>
+                            <span>HR Executive, Apex Solutions</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQs Section (STACKED FULL WIDTH) -->
+        <section class="faq-section" aria-labelledby="faq-heading">
+            <div class="section-container">
+                <div class="section-header" style="text-align: center; margin-bottom: 40px;">
+                    <h2 id="faq-heading">Frequently Asked Questions</h2>
+                    <p style="color: var(--color-text-muted); margin-top: 10px;">Have questions about formats, attachments, or ordering? Look here first.</p>
+                </div>
+
+                <div class="accordion-list" role="presentation" style="max-width: 800px; margin: 0 auto;">
+                    <!-- PO FAQ -->
+                    <div class="accordion-item">
+                        <h3>
+                            <button class="accordion-header" aria-expanded="false" aria-controls="faq-po">
+                                <span>Do you support Purchase Orders for government, councils, and schools?</span>
+                                <svg class="accordion-icon" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                            </button>
+                        </h3>
+                        <div class="accordion-content" id="faq-po" aria-hidden="true">
+                            <p>Yes. We support corporate invoicing and Purchase Orders (PO) for Australian educational institutions, government departments, and registered local councils. During checkout, select bank transfer invoice or send your official PO file to admin@badgestore.com.au. Payment can be settled via bank transfer within standard terms.</p>
+                        </div>
+                    </div>
+
+                    <!-- MAGNET SAFETY FAQ -->
+                    <div class="accordion-item">
+                        <h3>
+                            <button class="accordion-header" aria-expanded="false" aria-controls="faq-magnet">
+                                <span>How do magnetic name tag attachments work? Are they safe for all garments?</span>
+                                <svg class="accordion-icon" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                            </button>
+                        </h3>
+                        <div class="accordion-content" id="faq-magnet" aria-hidden="true">
+                            <p>Our damage-free magnetic backing uses strong neodymium double magnets mounted on a plastic backplate. By slotting the plate behind your shirt sleeve or lapel, the badge clamps securely without inserting pins. This holds firmly through suit jackets and premium fabrics without puncturing thread fibers. Note: Neodymium magnets should not be worn by employees with pacemakers.</p>
+                        </div>
+                    </div>
+
+                    <!-- BREAKAWAY FAQ -->
+                    <div class="accordion-item">
+                        <h3>
+                            <button class="accordion-header" aria-expanded="false" aria-controls="faq-breakaway">
+                                <span>Are safety breakaway clips available on your ID lanyards?</span>
+                                <svg class="accordion-icon" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                            </button>
+                        </h3>
+                        <div class="accordion-content" id="faq-breakaway" aria-hidden="true">
+                            <p>Yes. All of our custom corporate ID lanyards are equipped with plastic breakaway clips at the neck. In high-risk clinical, industrial, or retail settings, this safety feature ensures that if the lanyard is caught, snagged, or pulled, it snaps open instantly to protect the wearer from choking or injury.</p>
+                        </div>
+                    </div>
+
+                    <!-- ENAMEL FAQ -->
+                    <div class="accordion-item">
+                        <h3>
+                            <button class="accordion-header" aria-expanded="false" aria-controls="faq-enamel">
+                                <span>What is the difference between soft enamel and hard enamel custom lapel pins?</span>
+                                <svg class="accordion-icon" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                            </button>
+                        </h3>
+                        <div class="accordion-content" id="faq-enamel" aria-hidden="true">
+                            <p>Soft enamel lapel pins are baked after applying liquid color fills, leaving recessed colored wells below the raised metal borders (creating a textured 3D feel). Hard enamel pins, conversely, have paint layers overfilled and polished down completely flat with the metal frame, creating a glassy, flat, premium finish that resists scratches.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter Subscription (STACKED FULL WIDTH) -->
+        <section class="newsletter-section" aria-label="Newsletter Signup">
+            <div class="section-container">
+                <div class="newsletter-banner">
+                    <h2>Subscribe to our newsletter</h2>
+                    <p>Get updates on wholesale name badges, bulk orders, and seasonal business sales.</p>
+                    <form class="newsletter-form" id="newsletter-form">
+                        <label for="newsletter-email" class="visually-hidden">Corporate email address</label>
+                        <input type="email" id="newsletter-email" placeholder="Your corporate email address" required>
+                        <button type="submit" class="btn btn-primary">Subscribe Now</button>
+                    </form>
+                    <div id="newsletter-msg" class="success-message" aria-live="polite"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <img src="https://cdn11.bigcommerce.com/s-5ghsl7hcw4/content/img/badgestore%20logo%20new-01.svg" alt="BadgeStore" class="footer-logo-img">
+                <p class="brand-desc">BadgeStore Australia. Your trusted supplier of commercial name tags and customised staff identification accessories.</p>
+                <address class="company-address">
+                    ABN: 24 662 539 406<br>
+                    Office: 56 Prospect Rd, Prospect SA 5082<br>
+                    Phone: <a href="tel:1300862637">1300 862 637</a><br>
+                    Email: <a href="mailto:admin@badgestore.com.au">admin@badgestore.com.au</a>
+                </address>
+            </div>
+            
+            <div class="footer-links">
+                <h4>Customer Support</h4>
+                <ul>
+                    <li><a href="#">Postage Information</a></li>
+                    <li><a href="#">Bulk Orders</a></li>
+                    <li><a href="#">Terms &amp; Conditions</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="./dev-handoff-note-2.html">Developer Notes</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h4>Collections</h4>
+                <ul>
+                    <li><a href="categories/name-badges.html">Name Badges</a></li>
+                    <li><a href="categories/desk-plates.html">Desk Plates</a></li>
+                    <li><a href="categories/metal-plaques.html">Metal Plaques</a></li>
+                    <li><a href="categories/id-cards.html">ID Cards</a></li>
+                    <li><a href="categories/badge-machines.html">Button Machines</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-payment">
+                <h4>Payment &amp; Invoicing</h4>
+                <p>We accept Visa, Mastercard, American Express, and PayPal. For corporate purchase orders, we offer bank transfer invoices:</p>
+                <div class="bank-details">
+                    <strong>BadgeStore Corporate Account Bank Details:</strong><br>
+                    Account Name: BadgeStore<br>
+                    BSB: 013-347<br>
+                    Account Number: 435 563 945
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 BadgeStore Australia. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="assets/data.js"></script>
+    <script src="assets/app.js"></script>
+</body>
+</html>

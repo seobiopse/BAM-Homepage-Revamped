@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{metaTitle}}</title>
+    <meta name="description" content="{{metaDesc}}">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/style.css?v=2">
+
+    <!-- Unified JSON-LD Product & Merchant Schema -->
+    <script type="application/ld+json">
+    {{schemaGraph}}
+    </script>
+</head>
+<body>
+
+    <!-- Announcement Bar -->
+    <div class="announcement-bar">
+        <div class="announcement-content">
+            <span class="badge-alert">Notice</span>
+            <p>Moving to new premises! Place orders online as usual. Support delays may occur.</p>
+        </div>
+        <div class="announcement-contact">
+            <a href="tel:1300862637">Call: 1300 862 637</a>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="main-header" role="banner">
+        <div class="header-container">
+            <a href="../index.html" class="logo-area">
+                <img src="https://cdn11.bigcommerce.com/s-5ghsl7hcw4/content/img/badgestore%20logo%20new-01.svg" alt="BadgeStore" class="header-logo-img">
+            </a>
+
+            <!-- Mobile Hamburger Button -->
+            <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle Navigation" aria-expanded="false" aria-controls="mobile-drawer">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+
+            <!-- Navigation Menu dropdown list -->
+            {{navMenu}}
+
+            <div class="header-utilities">
+                <button class="util-btn search-trigger" aria-label="Search" aria-haspopup="dialog" aria-expanded="false">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </button>
+                <a href="#" class="util-btn account-link" aria-label="Account">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </a>
+                <a href="#" class="cart-badge-trigger" aria-label="Shopping Cart">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    <span class="cart-count">0</span>
+                </a>
+                <a href="../index.html#designer" class="btn btn-primary header-cta-btn">DIY Badges</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Drawer Menu -->
+    <div class="mobile-drawer" id="mobile-drawer" aria-hidden="true">
+        {{mobileNavMenu}}
+    </div>
+
+    <main id="main-content" role="main">
+        <!-- Breadcrumbs Navigation -->
+        <div class="breadcrumbs-outer">
+            <div class="section-container">
+                <nav class="breadcrumbs-nav" aria-label="Breadcrumbs">
+                    <ul class="breadcrumbs-list">
+                        {{breadcrumbs}}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Product Configurator Layout -->
+        <section class="product-layout-section">
+            <div class="section-container product-detail-grid">
+                
+                <!-- Left Column (Visual Previews & Postcode Calc) -->
+                <div class="product-visual-column">
+                    <div class="sticky-preview-wrapper">
+                        
+                        <!-- View Selector Tabs -->
+                        <div class="gallery-view-tabs" role="tablist" style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--color-border); padding-bottom: 8px;">
+                            <button class="gallery-tab-btn active" role="tab" aria-selected="true" data-view="designer" type="button" style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 700; padding: 8px 16px; border-radius: var(--border-radius-sm); border: none; cursor: pointer; transition: var(--transition-smooth); background-color: var(--color-primary-light); color: var(--color-primary);">Interactive Designer</button>
+                            <button class="gallery-tab-btn" role="tab" aria-selected="false" data-view="photos" type="button" style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 700; padding: 8px 16px; border-radius: var(--border-radius-sm); border: none; cursor: pointer; transition: var(--transition-smooth); background: transparent; color: var(--color-text-muted);">Product Photos</button>
+                        </div>
+                        
+                        <!-- Interactive Designer View -->
+                        <div id="designer-view" class="gallery-view-content active">
+                            <div class="badge-canvas-container" style="background:#FFF; border: 1px solid var(--color-border); border-radius:var(--border-radius-md); box-shadow:var(--shadow-md); margin-bottom: 20px; display: flex; justify-content: center; align-items: center; min-height: 220px;">
+                                {{previewerMarkup}}
+                            </div>
+                        </div>
+
+                        <!-- Product Photos Gallery View -->
+                        <div id="photos-view" class="gallery-view-content" style="display: none;">
+                            <div class="photo-preview-wrapper" style="border: 1px solid var(--color-border); border-radius:var(--border-radius-md); box-shadow:var(--shadow-md); margin-bottom: 20px; background: #FFF; display: flex; justify-content: center; align-items: center; min-height: 220px; padding: 20px; position: relative;">
+                                <img id="active-gallery-image" src="" alt="Active product photo" style="max-height: 180px; object-fit: contain;">
+                            </div>
+                        </div>
+
+                        <!-- Gallery Thumbnails -->
+                        {{galleryThumbnails}}
+
+                        <!-- Postcode Calculator Widget Directly on Product Details Page -->
+                        <div class="calc-widget" style="padding: 24px; box-shadow: var(--shadow-sm); border-radius: var(--border-radius-md); background-color: #FFFFFF; border: 1px solid var(--color-border);">
+                            <h4 style="font-family: var(--font-heading); font-size: 1rem; margin-bottom: 12px; color: var(--color-secondary);">Estimate Delivery Windows</h4>
+                            <div class="widget-row">
+                                <label for="postcode-input" style="font-size:0.85rem; font-weight:700; margin-bottom: 6px; display:block;">Enter Postcode:</label>
+                                <div class="postcode-input-row" style="gap: 8px; display: flex; width:100%;">
+                                    <input type="text" id="postcode-input" placeholder="E.g. 2000" maxlength="4" style="padding: 8px 12px; font-size:0.9rem; border: 1px solid var(--color-border); border-radius:var(--border-radius-sm); outline:none; flex:1;">
+                                    <button id="postcode-calc-btn" class="btn btn-primary" type="button" style="padding: 8px 16px; font-size: 0.9rem;">Estimate</button>
+                                </div>
+                                <span id="postcode-error" class="error-text" style="display: none; font-size:0.75rem; color: var(--color-primary); margin-top:4px;">Please enter a valid 4-digit postcode.</span>
+                            </div>
+
+                            <div id="postcode-results" class="postcode-results-area" style="display: none; margin-top: 15px; border-top: 1px solid var(--color-border); padding-top: 15px;">
+                                <div class="delivery-results-list" style="grid-template-columns: 1fr; gap: 8px; display:flex; flex-direction:column;">
+                                    <div class="delivery-result-card" style="padding: 10px; font-size:0.8rem; display: flex; justify-content:space-between; align-items:center; background-color:var(--color-bg-surface); border:1px solid var(--color-border); border-radius:var(--border-radius-sm);">
+                                        <strong>Express Post:</strong>
+                                        <span class="arrival-date" id="express-arrival">--</span>
+                                    </div>
+                                    <div class="delivery-result-card" style="padding: 10px; font-size:0.8rem; display: flex; justify-content:space-between; align-items:center; background-color:var(--color-bg-surface); border:1px solid var(--color-border); border-radius:var(--border-radius-sm);">
+                                        <strong>Standard Post:</strong>
+                                        <span class="arrival-date" id="standard-arrival">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Right Column (Customization Form Controls) -->
+                <div class="product-info-column">
+                    <div class="product-headline-wrap">
+                        <h1>{{productName}}</h1>
+                        <div class="price-wrap">
+                            <span class="price-val">{{priceRange}}</span>
+                            <span class="price-wholesale-label">Wholesale breaks automatically apply</span>
+                        </div>
+                    </div>
+
+                    <!-- Options Form -->
+                    <form class="customizer-options-form" id="customizer-form" aria-label="Product Configuration options" data-product-id="{{productId}}" data-base-price="{{basePrice}}">
+                        {{formControls}}
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Technical Specifications Table -->
+        <section class="specs-section" aria-label="Product specifications">
+            <div class="section-container">
+                <div class="specs-grid-container">
+                    <div class="spec-text-block">
+                        <h2>{{productName}} Specs</h2>
+                        <p>{{description}}</p>
+                    </div>
+
+                    <table class="seo-comparison-table">
+                        <tbody>
+                            {{specsTable}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Product-Specific FAQs -->
+        <section class="faq-section" aria-labelledby="product-faq-heading">
+            <div class="section-container">
+                <div class="section-header">
+                    <h2 id="product-faq-heading">Frequently Asked Questions</h2>
+                    <p>Have specific questions about this product? Check below.</p>
+                </div>
+
+                <div class="accordion-list">
+                    {{productFaqs}}
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <img src="https://cdn11.bigcommerce.com/s-5ghsl7hcw4/content/img/badgestore%20logo%20new-01.svg" alt="BadgeStore" class="footer-logo-img">
+                <p class="brand-desc">BadgeStore Australia. Your trusted supplier of commercial name tags and customised staff identification accessories.</p>
+                <address class="company-address">
+                    ABN: 24 662 539 406<br>
+                    Office: 56 Prospect Rd, Prospect SA 5082<br>
+                    Phone: <a href="tel:1300862637">1300 862 637</a><br>
+                    Email: <a href="mailto:admin@badgestore.com.au">admin@badgestore.com.au</a>
+                </address>
+            </div>
+            
+            <div class="footer-links">
+                <h4>Customer Support</h4>
+                <ul>
+                    <li><a href="#">Postage Information</a></li>
+                    <li><a href="#">Bulk Orders</a></li>
+                    <li><a href="#">Terms &amp; Conditions</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="../dev-handoff-note-2.html">Developer Notes</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h4>Collections</h4>
+                <ul>
+                    <li><a href="../categories/name-badges.html">Engraved Badges</a></li>
+                    <li><a href="../categories/desk-plates.html">Domed Acrylic Badges</a></li>
+                    <li><a href="../categories/metal-plaques.html">Eco Hardwood Badges</a></li>
+                    <li><a href="../categories/id-cards.html">Corporate ID Cards</a></li>
+                    <li><a href="../categories/badge-machines.html">Button Machines</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-payment">
+                <h4>Payment &amp; Invoicing</h4>
+                <p>We accept Visa, Mastercard, American Express, and PayPal. For corporate purchase orders, we offer bank transfer invoices:</p>
+                <div class="bank-details">
+                    <strong>BadgeStore Corporate Account Bank Details:</strong><br>
+                    Account Name: BadgeStore<br>
+                    BSB: 013-347<br>
+                    Account Number: 435 563 945
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 BadgeStore Australia. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="../assets/data.js"></script>
+    <script src="../assets/app.js"></script>
+</body>
+</html>

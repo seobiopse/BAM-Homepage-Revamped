@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Developer Hand-off — Programmatic Static Page Builder | BadgeStore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & TOKENS ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --red-dark:      #990c10;
+  --red-mid:       #ed1c24;
+  --red-light:     #f43f5e;
+  --red-pale:      #fff1f2;
+  --red-border:    #fecdd3;
+  --brand-charcoal: #231f20;
+  --text-dark:     #1a1a1a;
+  --text-body:     #374151;
+  --text-muted:    #6b7280;
+  --white:         #ffffff;
+  --bg:            #fafaf5; /* warm ivory backdrop */
+  --border:        #e5e7eb;
+  --amber-pale:    #fef3c7;
+  --amber-border:  #fcd34d;
+  --amber:         #92400e;
+  --blue-pale:     #eff6ff;
+  --blue-border:   #bfdbfe;
+  --blue:          #1d4ed8;
+  --code-bg:       #0d1117;
+  --code-text:     #e6edf3;
+  --mono: 'SF Mono','Fira Code','Cascadia Code','Consolas',monospace;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--text-body);
+  background: var(--bg);
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  background: var(--brand-charcoal);
+  color: rgba(255,255,255,0.8);
+  font-size: 12px;
+  padding: 10px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  border-bottom: 2px solid var(--red-mid);
+}
+.topbar-trust { display: flex; gap: 18px; }
+.topbar-trust span::before { content: '✓ '; color: var(--red-mid); }
+.topbar a { color: var(--red-light); text-decoration: none; font-weight: 500; }
+
+/* ── HEADER ── */
+.doc-header {
+  background: linear-gradient(135deg, var(--brand-charcoal) 0%, #3e3839 100%);
+  padding: 40px 40px 34px;
+  color: white;
+  position: relative;
+}
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.65);
+  text-decoration: none;
+  margin-bottom: 20px;
+  transition: color 0.2s;
+}
+.back-link:hover { color: var(--red-light); }
+.back-link svg { width: 12px; height: 12px; }
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.doc-header h1 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: white;
+  line-height: 1.25;
+}
+.doc-header h1 span { color: var(--red-mid); }
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(237, 28, 36, 0.15);
+  border: 1px solid var(--red-mid);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.status-dot {
+  width: 7px; height: 7px;
+  background: var(--red-mid);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--red-mid);
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px 0;
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.65);
+  border-top: 1px solid rgba(255,255,255,0.12);
+  padding-top: 18px;
+}
+.meta-grid strong { display: block; color: white; font-weight: 600; font-size: 13px; margin-top: 2px; }
+
+/* ── TOC BAR ── */
+.toc-bar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+}
+.toc-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-right: 4px; }
+.toc-link {
+  font-size: 12px; color: var(--brand-charcoal); text-decoration: none;
+  padding: 4px 12px; border-radius: 20px;
+  border: 1px solid var(--border); background: var(--white);
+  transition: all 0.2s; white-space: nowrap;
+  font-weight: 500;
+}
+.toc-link:hover { background: var(--red-pale); border-color: var(--red-border); color: var(--red-dark); }
+
+/* ── MAIN LAYOUT ── */
+.content { max-width: 1100px; margin: 0 auto; padding: 40px 40px 80px; }
+
+/* ── SECTION HEADINGS ── */
+.section { margin-bottom: 54px; }
+.section-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--red-dark);
+  margin-bottom: 6px; display: block;
+}
+.section-h2 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 24px; font-weight: 800; color: var(--brand-charcoal);
+  margin-bottom: 12px; line-height: 1.25;
+}
+.section-intro {
+  font-size: 14.5px; color: var(--text-muted);
+  margin-bottom: 24px; line-height: 1.7;
+  max-width: 800px;
+}
+.section-head-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.section-num {
+  width: 28px; height: 28px;
+  background: var(--brand-charcoal); color: white;
+  border-radius: 50%; font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--red-mid);
+}
+.section-divider {
+  border: none; border-top: 2px solid var(--border);
+  margin: 0 0 32px;
+}
+
+/* ── OVERVIEW BOX ── */
+.overview-box {
+  background: #fffdf5; /* warm glow */
+  border-left: 4px solid var(--red-mid);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 20px 24px;
+  font-size: 14.5px; color: var(--text-dark); line-height: 1.8;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  border-top: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.overview-box strong { color: var(--red-dark); }
+
+/* ── BEFORE / AFTER CARDS ── */
+.ba-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--white);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+.ba-col { display: flex; flex-direction: column; }
+.ba-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 20px; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.8px; text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+.ba-header.before-h {
+  background: #f9fafb; color: #4b5563;
+  border-right: 1px solid var(--border);
+}
+.ba-header.after-h  { background: var(--red-pale); color: var(--red-dark); }
+.ba-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.ba-dot.before-dot { background: #9ca3af; }
+.ba-dot.after-dot  { background: var(--red-mid); }
+
+.ba-body {
+  padding: 22px; font-size: 13.5px; color: var(--text-body); line-height: 1.8;
+  flex: 1;
+}
+.ba-body.before-body { background: #fdfdfd; border-right: 1px solid var(--border); }
+.ba-body.after-body  { background: #fffdfb; }
+.ba-body strong { color: var(--brand-charcoal); }
+.ba-body em { color: var(--text-muted); font-style: italic; }
+
+/* ── CODE BLOCKS ── */
+pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 16px 20px;
+  border-radius: var(--radius-sm);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.75;
+  overflow-x: auto;
+  margin: 12px 0 0;
+  white-space: pre;
+  border: 1px solid #30363d;
+}
+pre::-webkit-scrollbar { height: 4px; }
+pre::-webkit-scrollbar-thumb { background: #444; border-radius: 2px; }
+code {
+  background: var(--red-pale);
+  color: var(--red-dark);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 12px;
+  border: 1px solid var(--red-border);
+}
+pre code { background: none; border: none; color: inherit; padding: 0; font-size: inherit; }
+
+/* Syntax colours in pre blocks */
+.kw  { color: #ff79c6; }   /* keyword/tag */
+.fn  { color: #50fa7b; }   /* function */
+.str { color: #f1fa8c; }   /* string */
+.cm  { color: #6272a4; font-style: italic; } /* comment */
+.at  { color: #8be9fd; }   /* attribute */
+.va  { color: #ffb86c; }   /* variable */
+
+/* ── VAR PILLS ── */
+.var-pill {
+  display: inline-block;
+  background: #eef2f6;
+  color: #1e3a8a;
+  border-radius: 4px;
+  padding: 1px 7px;
+  font-size: 12px;
+  font-family: var(--mono);
+  border: 1px solid #d1d5db;
+}
+
+/* ── CALLOUT BOXES ── */
+.callout {
+  display: flex; gap: 14px;
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  margin: 18px 0;
+  font-size: 13.5px; line-height: 1.7;
+  align-items: flex-start;
+}
+.callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.callout strong { display: block; margin-bottom: 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+.callout-warn  { background: var(--amber-pale); border: 1px solid var(--amber-border); color: #92400e; }
+.callout-warn strong { color: #78350f; }
+.callout-info  { background: var(--blue-pale); border: 1px solid var(--blue-border); color: #1e40af; }
+.callout-info strong { color: #1e3a8a; }
+.callout-red { background: var(--red-pale); border: 1px solid var(--red-border); color: #9f1239; }
+.callout-red strong { color: var(--red-dark); }
+
+/* ── URL EXAMPLE ── */
+.url-example {
+  background: #f3f4f6;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 20px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--brand-charcoal);
+  margin: 12px 0;
+  line-height: 2;
+}
+.url-example span { color: var(--red-mid); font-weight: 700; }
+
+/* ── TABLES ── */
+.table-wrap { overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--border); margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+table {
+  width: 100%; border-collapse: collapse;
+  font-size: 13.5px; background: var(--white);
+}
+thead tr { background: var(--brand-charcoal); }
+thead th {
+  padding: 12px 16px; text-align: left;
+  color: white; font-weight: 600;
+  font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase;
+}
+thead th:first-child { border-radius: var(--radius-sm) 0 0 0; }
+thead th:last-child  { border-radius: 0 var(--radius-sm) 0 0; }
+tbody tr:nth-child(even) td { background: #fbfbf8; }
+tbody td {
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  color: var(--text-body); vertical-align: top;
+}
+tbody tr:last-child td { border-bottom: none; }
+.var-table thead tr { background: var(--brand-charcoal); border-bottom: 2px solid var(--red-mid); }
+
+/* ── FOOTER ── */
+.doc-footer {
+  background: var(--brand-charcoal); color: rgba(255,255,255,0.6);
+  padding: 24px 40px; font-size: 12px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 8px;
+  border-top: 4px solid var(--red-mid);
+}
+.doc-footer a { color: rgba(255,255,255,0.6); text-decoration: none; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 700px) {
+  .topbar { padding: 8px 16px; flex-direction: column; text-align: center; }
+  .doc-header { padding: 24px 20px 20px; }
+  .doc-header h1 { font-size: 22px; }
+  .meta-grid { grid-template-columns: 1fr 1fr; }
+  .toc-bar { padding: 10px 16px; overflow-x: auto; flex-wrap: nowrap; }
+  .toc-link { flex-shrink: 0; }
+  .content { padding: 24px 16px 60px; }
+  .ba-grid { grid-template-columns: 1fr; }
+  .ba-header.before-h { border-right: none; border-bottom: 1px solid var(--border); }
+  .ba-body.before-body { border-right: none; border-bottom: 1px solid var(--border); }
+  .doc-footer { padding: 18px 16px; flex-direction: column; text-align: center; }
+}
+@media (min-width: 701px) and (max-width: 900px) {
+  .content { padding: 28px 24px 60px; }
+  .meta-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div>
+    <span>BadgeStore Australia</span>
+    &nbsp;·&nbsp;
+    <a href="mailto:admin@badgestore.com.au">admin@badgestore.com.au</a>
+  </div>
+  <div class="topbar-trust">
+    <span>Static Compilation</span>
+    <span>NodeJS + Isomorphic Catalog</span>
+    <span>Responsive SEO Templates</span>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="doc-header">
+  <a href="./index.html" class="back-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+    Back to Homepage
+  </a>
+  <div class="header-row">
+    <h1>Developer Hand-off Note<br><span>Programmatic Static Site Redesign</span></h1>
+    <div class="status-badge">
+      <span class="status-dot"></span>
+      Ready for Deployment
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div>Project<strong>BadgeStore Redesign (BAS)</strong></div>
+    <div>Stack<strong>NodeJS Compiler + Vanilla JS</strong></div>
+    <div>Prepared by<strong>Girish Kumar — SEO Manager</strong></div>
+    <div>Scope<strong>badgestore.com.au</strong></div>
+  </div>
+</div>
+
+<!-- TOC -->
+<nav class="toc-bar" aria-label="Document sections">
+  <span class="toc-label">Jump to</span>
+  <a class="toc-link" href="#s0">Overview</a>
+  <a class="toc-link" href="#s1">Compilation Workflow</a>
+  <a class="toc-link" href="#s2">Registry Schema</a>
+  <a class="toc-link" href="#s3">Template Interpolation</a>
+  <a class="toc-link" href="#s4">SEO Redesign</a>
+  <a class="toc-link" href="#s5">JSON-LD Schema</a>
+  <a class="toc-link" href="#s6">Sign-off Checklist</a>
+</nav>
+
+<div class="content">
+
+  <!-- ── OVERVIEW ── -->
+  <div class="section" id="s0">
+    <span class="section-eyebrow">What this document covers</span>
+    <h2 class="section-h2">Overview</h2>
+    <hr class="section-divider">
+    <div class="overview-box">
+      This hand-off note details the **static compilation framework and template architecture** built for <strong>badgestore.com.au (BAS)</strong>. To ensure lightning-fast loading speeds, complete offline preview compatibility, and robust search indexing, the site compiled to flat, standalone HTML files without database or dynamic backend requirements.<br><br>
+      The architecture uses an <strong>Isomorphic Catalog Datastore</strong> (`assets/data.js`) defining categories and products, a local <strong>Node.js Compiler</strong> (`build.js`), and three semantic **HTML Layout Templates** (`templates/`).
+    </div>
+  </div>
+
+  <!-- ── WORKFLOW ── -->
+  <div class="section" id="s1">
+    <div class="section-head-row">
+      <div class="section-num">1</div>
+      <span class="section-eyebrow" style="margin-bottom:0;">Build Environment</span>
+    </div>
+    <h2 class="section-h2">Compilation Workflow</h2>
+    <hr class="section-divider">
+    <p class="section-intro">The compiler compiles all page-level categories, sub-categories, and products dynamically into static files. Relative link paths are rewritten recursively to ensure standard subfolder compatibility (e.g. on GitHub Pages).</p>
+
+    <div class="ba-grid">
+      <div class="ba-col">
+        <div class="ba-header before-h">
+          <span class="ba-dot before-dot"></span>
+          Input Files (Source Templates)
+        </div>
+        <div class="ba-body before-body">
+          <strong>Isomorphic datastore:</strong><br>
+          <code class="var-pill">BAS/assets/data.js</code> (Products, pricing brackets, categories, meta configurations)<br><br>
+          <strong>HTML templates:</strong><br>
+          <ul>
+            <li>`templates/index-template.html`</li>
+            <li>`templates/category-template.html`</li>
+            <li>`templates/product-template.html`</li>
+          </ul>
+        </div>
+      </div>
+      <div class="ba-col">
+        <div class="ba-header after-h">
+          <span class="ba-dot after-dot"></span>
+          Output Structure (Compiled Production Files)
+        </div>
+        <div class="ba-body after-body">
+          <strong>Production Root:</strong><br>
+          <code class="var-pill">BAS/index.html</code> (Homepage)<br><br>
+          <strong>Subdirectories:</strong><br>
+          <ul>
+            <li>`categories/[category-slug].html` (e.g., `acrylic-dome-name-badges.html`)</li>
+            <li>`products/[product-slug].html` (e.g., `acrylic-domed-name-badge.html`)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <pre><code class="language-bash"><span class="cm"># To recompile the entire website static HTML structure, run:</span>
+node build.js
+
+<span class="cm"># Light-weight local preview server command:</span>
+npx -y http-server . -p 8080</code></pre>
+  </div>
+
+  <!-- ── REGISTRY SCHEMA ── -->
+  <div class="section" id="s2">
+    <div class="section-head-row">
+      <div class="section-num">2</div>
+      <span class="section-eyebrow" style="margin-bottom:0;">Data Model</span>
+    </div>
+    <h2 class="section-h2">Isomorphic Catalog Registry (`assets/data.js`)</h2>
+    <hr class="section-divider">
+    <p class="section-intro">All website parameters are defined in a clean isomorphic JSON registry module. This object is imported by `build.js` in Node, and loaded directly by client-side configurator scripts in the browser.</p>
+
+    <div class="table-wrap">
+      <table class="var-table">
+        <thead>
+          <tr>
+            <th>Registry Field</th>
+            <th>Data Type</th>
+            <th>Purpose &amp; ACF Equivalent</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>categories[slug].parent</code></td>
+            <td>String | null</td>
+            <td>Identifies if a category is a sub-category. Influences dropdown nesting and slug routing.</td>
+          </tr>
+          <tr>
+            <td><code>categories[slug].metaTitle</code></td>
+            <td>String</td>
+            <td>Page title tag parsed by crawler spiders and search engines.</td>
+          </tr>
+          <tr>
+            <td><code>categories[slug].metaDesc</code></td>
+            <td>String</td>
+            <td>SEO snippet description shown on search engine result pages.</td>
+          </tr>
+          <tr>
+            <td><code>categories[slug].comparisonGuide</code></td>
+            <td>Object</td>
+            <td>Holds headers and cell rows for rendering dynamic comparison matrices.</td>
+          </tr>
+          <tr>
+            <td><code>categories[slug].faqs</code></td>
+            <td>Array&lt;Object&gt;</td>
+            <td>List of question/answer blocks mapping to responsive FAQ Accordions and JSON-LD FAQ schema.</td>
+          </tr>
+          <tr>
+            <td><code>products[slug].priceBrackets</code></td>
+            <td>Array&lt;Object&gt;</td>
+            <td>Wholesale bulk purchase tiers used by client-side calculators.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-info">
+      <div class="callout-icon">💡</div>
+      <div>
+        <strong>Isomorphic Compatibility Hook</strong>
+        To run correctly in both server-side Node execution environments and client-side web browser clients, the catalog file ends with:
+        <pre><code class="language-javascript"><span class="kw">if</span> (<span class="kw">typeof</span> <span class="va">module</span> !== <span class="str">'undefined'</span> && <span class="va">module</span>.<span class="va">exports</span>) {
+    <span class="va">module</span>.<span class="va">exports</span> = <span class="va">ProductCatalog</span>;
+} <span class="kw">else</span> {
+    <span class="va">window</span>.<span class="va">ProductCatalog</span> = <span class="va">ProductCatalog</span>;
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TEMPLATE INTERPOLATION ── -->
+  <div class="section" id="s3">
+    <div class="section-head-row">
+      <div class="section-num">3</div>
+      <span class="section-eyebrow" style="margin-bottom:0;">Placeholders mapping</span>
+    </div>
+    <h2 class="section-h2">Template Placeholder Interpolation</h2>
+    <hr class="section-divider">
+    <p class="section-intro">Double braces syntax <code>{{variable}}</code> represents content insertion areas inside raw templates files. The builder script parses templates, replaces these strings, and saves output HTML.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Placeholder Tag</th>
+            <th>Scope Template</th>
+            <th>Generated Content Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>{{metaTitle}}</code></td>
+            <td>Category, Product</td>
+            <td>Interpolated from registry metadata configs.</td>
+          </tr>
+          <tr>
+            <td><code>{{metaDesc}}</code></td>
+            <td>Category, Product</td>
+            <td>Interpolated from registry meta descriptions.</td>
+          </tr>
+          <tr>
+            <td><code>{{navMenu}}</code></td>
+            <td>All templates</td>
+            <td>Returns nested navigation structures. Evaluates parent-child category linkages.</td>
+          </tr>
+          <tr>
+            <td><code>{{breadcrumbs}}</code></td>
+            <td>Category, Product</td>
+            <td>Renders hierarchical navigation trail indicating current position.</td>
+          </tr>
+          <tr>
+            <td><code>{{seoArticle}}</code></td>
+            <td>Category</td>
+            <td>Renders the redesigned, structured, feature-rich editorial copy layout.</td>
+          </tr>
+          <tr>
+            <td><code>{{comparisonTable}}</code></td>
+            <td>Category</td>
+            <td>Draws standard responsive comparison guides.</td>
+          </tr>
+          <tr>
+            <td><code>{{faqList}}</code></td>
+            <td>Category, Product</td>
+            <td>Renders accessible accordion tabs with toggle micro-animations.</td>
+          </tr>
+          <tr>
+            <td><code>{{schemaGraph}}</code></td>
+            <td>All templates</td>
+            <td>Outputs programmatic SEO structured metadata.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── SEO REDESIGN ── -->
+  <div class="section" id="s4">
+    <div class="section-head-row">
+      <div class="section-num">4</div>
+      <span class="section-eyebrow" style="margin-bottom:0;">Layout Redesign</span>
+    </div>
+    <h2 class="section-h2">SEO Description Redesign Extractor</h2>
+    <hr class="section-divider">
+    <p class="section-intro">Rather than displaying messy unstyled raw HTML blocks scraped from legacy source files, <code>build.js</code> parses old category content via regular expressions and generates standard responsive sections.</p>
+
+    <div class="ba-grid">
+      <div class="ba-col">
+        <div class="ba-header before-h">
+          <span class="ba-dot before-dot"></span>
+          Original Content Elements
+        </div>
+        <div class="ba-body before-body">
+          <strong>Messy raw assets:</strong><br>
+          Legacy category descriptions contain raw inline CSS, tables, and images placed in a single continuous body column, leading to layout squeeze.
+        </div>
+      </div>
+      <div class="ba-col">
+        <div class="ba-header after-h">
+          <span class="ba-dot after-dot"></span>
+          Redesigned Components Output
+        </div>
+        <div class="ba-body after-body">
+          <strong>1. Hero Feature Block:</strong> Image on the left with shadow, title/description and wholesale price alerts on the right.<br>
+          <strong>2. Color Swatch Grid:</strong> Inline swatches display inside a rounded chip list with hover tooltips.<br>
+          <strong>3. Backing Clip Cards:</strong> Renders a responsive card grid mapping standard clips to photos and details.<br>
+          <strong>4. Editorial Content:</strong> Left-aligned text headings with clean margins.
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-red">
+      <div class="callout-icon">⚡</div>
+      <div>
+        <strong>Critical Design &amp; Styling Alignments</strong>
+        <ul>
+          <li><strong>Standalone Logo:</strong> Logo height is set strictly to <code>42px</code> with <code>margin-right: 40px</code> in header styles.</li>
+          <li><strong>Single-Line CTA:</strong> Header CTA button has <code>white-space: nowrap !important</code> and tensed horizontal padding. Keeps "DIY Badges" CTA aligned on one single line.</li>
+          <li><strong>Cache Buster:</strong> Stylesheet links must always use cache buster parameters (e.g. <code>style.css?v=2</code>) to prevent browser rendering discrepancies.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SCHEMA ── -->
+  <div class="section" id="s5">
+    <div class="section-head-row">
+      <div class="section-num">5</div>
+      <span class="section-eyebrow" style="margin-bottom:0;">Generative Search</span>
+    </div>
+    <h2 class="section-h2">Programmatic JSON-LD Schema Graph</h2>
+    <hr class="section-divider">
+    <p class="section-intro">To achieve maximum Generative Engine Optimization (GEO) and Answer Engine Optimization (AEO), the static compilation script automatically injects dynamic structured metadata.</p>
+    <pre><code class="language-javascript"><span class="cm">// Generated programmatically per category file inside build.js:</span>
+<span class="kw">const</span> <span class="va">catSchema</span> = {
+    <span class="str">"@context"</span>: <span class="str">"https://schema.org"</span>,
+    <span class="str">"@graph"</span>: [
+        {
+            <span class="str">"@type"</span>: <span class="str">"CollectionPage"</span>,
+            <span class="str">"@id"</span>: <span class="str">`https://www.badgestore.com.au/categories/${cat.slug}.html#collection`</span>,
+            <span class="str">"name"</span>: <span class="va">cat</span>.<span class="va">heading</span>,
+            <span class="str">"description"</span>: <span class="va">cat</span>.<span class="va">metaDesc</span>,
+            <span class="str">"url"</span>: <span class="str">`https://www.badgestore.com.au/categories/${cat.slug}.html`</span>
+        },
+        {
+            <span class="str">"@type"</span>: <span class="str">"ItemList"</span>,
+            <span class="str">"itemListElement"</span>: <span class="va">cat</span>.<span class="va">products</span>.<span class="fn">map</span>((<span class="va">pRef</span>, <span class="va">idx</span>) => ({
+                <span class="str">"@type"</span>: <span class="str">"ListItem"</span>,
+                <span class="str">"position"</span>: <span class="va">idx</span> + 1,
+                <span class="str">"url"</span>: <span class="str">`https://www.badgestore.com.au/products/${pRef.id}.html`</span>,
+                <span class="str">"name"</span>: <span class="va">pRef</span>.<span class="va">name</span>
+            }))
+        }
+    ]
+};</code></pre>
+  </div>
+
+  <!-- ── CHECKLIST ── -->
+  <div class="section" id="s6">
+    <div class="section-head-row">
+      <div class="section-num">6</div>
+      <span class="section-eyebrow" style="margin-bottom:0;">Quality Assurance</span>
+    </div>
+    <h2 class="section-h2">Handoff &amp; Deployment Checklist</h2>
+    <hr class="section-divider">
+    <p class="section-intro">Follow these steps when adding new pages or launching revisions to BadgeStore:</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Step #</th>
+            <th>Required Verification Task</th>
+            <th>Responsible Owner</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Add category config / product specifications in <code>assets/data.js</code></td>
+            <td>SEO Specialist</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Verify parent-child linkages if creating a new sub-category structure</td>
+            <td>SEO Specialist</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Execute compilation build task <code>node build.js</code></td>
+            <td>Developer / SEO Specialist</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Start local HTTP server and review new layout page at <code>http://localhost:8080/categories/[slug].html</code></td>
+            <td>Developer / QA</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Confirm new sub-category lists properly inside navigation hover dropdown menus</td>
+            <td>QA Specialist</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>Check that the standalone logo stands out and "DIY Badges" CTA remains single-line</td>
+            <td>Design QA</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>Run compiled markup through Google Rich Results Tester to confirm Schema graph integrity</td>
+            <td>SEO Specialist</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<!-- FOOTER -->
+<div class="doc-footer">
+  <span>BadgeStore Australia · Developer Hand-off Note · Girish Kumar | SEO Manager · June 2026</span>
+  <span>Stack: <strong style="color:white;">NodeJS Static Compiler</strong> · Scope: badgestore.com.au</span>
+</div>
+
+</body>
+</html>
