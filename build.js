@@ -760,6 +760,37 @@ function compileGalleryThumbnails(prod) {
     return galleryThumbnailsHtml;
 }
 
+// Helper to compile comparison table for category page and dev notes
+function compileComparisonTableHtml(cat) {
+    if (!cat.comparisonGuide) return '';
+    let comparisonTableHtml = `
+        <h3>${cat.comparisonGuide.title}</h3>
+        <table class="seo-comparison-table">
+            <thead>
+                <tr>
+    `;
+    cat.comparisonGuide.headers.forEach(h => {
+        comparisonTableHtml += `<th>${h}</th>`;
+    });
+    comparisonTableHtml += `
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    cat.comparisonGuide.rows.forEach(row => {
+        comparisonTableHtml += `<tr>`;
+        row.forEach(cell => {
+            comparisonTableHtml += `<td>${cell}</td>`;
+        });
+        comparisonTableHtml += `</tr>`;
+    });
+    comparisonTableHtml += `
+            </tbody>
+        </table>
+    `;
+    return comparisonTableHtml;
+}
+
 // 1. GENERATE CATEGORY PAGES
 Object.keys(ProductCatalog.categories).forEach(catKey => {
     const cat = ProductCatalog.categories[catKey];
@@ -849,31 +880,7 @@ Object.keys(ProductCatalog.categories).forEach(catKey => {
     html = html.replace(/{{seoArticle}}/g, seoArticleHtml);
 
     // Comparison Table
-    let comparisonTableHtml = `
-        <h3>${cat.comparisonGuide.title}</h3>
-        <table class="seo-comparison-table">
-            <thead>
-                <tr>
-    `;
-    cat.comparisonGuide.headers.forEach(h => {
-        comparisonTableHtml += `<th>${h}</th>`;
-    });
-    comparisonTableHtml += `
-                </tr>
-            </thead>
-            <tbody>
-    `;
-    cat.comparisonGuide.rows.forEach(row => {
-        comparisonTableHtml += `<tr>`;
-        row.forEach(cell => {
-            comparisonTableHtml += `<td>${cell}</td>`;
-        });
-        comparisonTableHtml += `</tr>`;
-    });
-    comparisonTableHtml += `
-            </tbody>
-        </table>
-    `;
+    let comparisonTableHtml = compileComparisonTableHtml(cat);
     html = html.replace(/{{comparisonTable}}/g, comparisonTableHtml);
 
     // FAQs list
@@ -1403,5 +1410,406 @@ indexHtml = indexHtml.replace(/{{navMenu}}/g, compileNavigation(''));
 indexHtml = indexHtml.replace(/{{mobileNavMenu}}/g, compileMobileNavigation(''));
 indexHtml = indexHtml.replace(/{{categoryGrid}}/g, compileCategoryGrid());
 fs.writeFileSync(path.join(__dirname, 'index.html'), indexHtml, 'utf8');
+
+// 4. GENERATE DEV NOTES DASHBOARD
+console.log('Compiling Developer Handoff Notes...');
+let devNotesHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dev Notes — BadgeStore Australia pSEO Category Pages</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --dark:#0d1117;--panel:#161b22;--border:#30363d;
+  --gold:#ED1C24; /* Red */
+  --navy:#231F20; /* Charcoal */
+  --text:#f0f6fc;--muted:#8b949e;--sub:#c9d1d9;
+  --amber:#f0a500;
+}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--dark);color:var(--text);font-size:13px;line-height:1.6;min-height:100vh}
+a{color:var(--gold)}
+
+/* HEADER */
+.hdr{background:var(--navy);border-bottom:3px solid var(--gold);padding:16px 28px;position:sticky;top:0;z-index:300}
+.hdr-in{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.hdr-logo{background:var(--gold);color:#fff;font-size:10px;font-weight:800;padding:6px 10px;border-radius:4px;letter-spacing:.5px;line-height:1.3;text-align:center;flex-shrink:0}
+.hdr-title{font-size:15px;font-weight:700;color:#fff}
+.hdr-sub{font-size:11px;color:rgba(255,255,255,.45);margin-top:2px}
+.hdr-links{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.hdr-link{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:6px 12px;font-size:11px;color:rgba(255,255,255,.75);text-decoration:none;transition:all .15s;white-space:nowrap}
+.hdr-link:hover{background:rgba(255,255,255,.14);color:#fff}
+
+/* CATEGORY TABS */
+.tab-bar{background:rgba(0,0,0,.4);border-bottom:1px solid var(--border);position:sticky;top:72px;z-index:200;overflow-x:auto;scrollbar-width:none}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab-bar-in{max-width:1400px;margin:0 auto;display:flex;padding:0 20px}
+.cat-tab{background:none;border:none;border-bottom:3px solid transparent;color:rgba(255,255,255,.4);font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:400;padding:12px 16px;cursor:pointer;white-space:nowrap;transition:all .15s}
+.cat-tab:hover{color:rgba(255,255,255,.75)}
+.cat-tab.on{color:#fff;font-weight:600}
+
+/* MAIN */
+.main{max-width:1400px;margin:0 auto;padding:28px 20px 60px}
+
+/* CAT PAGE */
+.cat-page{display:none}
+.cat-page.on{display:block}
+
+/* PAGE URL BAR */
+.page-url-bar{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:24px;flex-wrap:wrap}
+.purl-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);flex-shrink:0;font-family:'JetBrains Mono',monospace}
+.purl-link{font-size:13px;font-weight:600;text-decoration:none;font-family:'JetBrains Mono',monospace}
+.purl-link:hover{text-decoration:underline}
+.purl-note{font-size:11px;color:var(--muted);margin-left:auto}
+
+/* SECTION BLOCK */
+.sec-block{background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px}
+.sec-header{display:flex;align-items:center;gap:10px;padding:13px 18px;background:#1a1f2e;border-bottom:1px solid var(--border)}
+.sec-icon{width:28px;height:28px;background:var(--navy);color:#fff;font-size:13px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sec-label{font-size:14px;font-weight:700;color:var(--text)}
+.sec-body{display:grid;grid-template-columns:340px 1fr;gap:0}
+.shot-col{border-right:1px solid var(--border);padding:16px}
+.shot-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-bottom:10px;font-family:'JetBrains Mono',monospace}
+.shot-img{width:100%;border-radius:6px;border:1px solid var(--border);display:block}
+.content-col{padding:16px 20px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;max-height:600px}
+
+/* COPY FRAME */
+.cf-wrap{display:flex;flex-direction:column;gap:4px}
+.cf-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.cf-box{background:#0d1117;border:1px solid var(--border);border-radius:5px;padding:10px 12px;font-size:12.5px;color:var(--sub);line-height:1.7;white-space:pre-wrap;word-break:break-word;font-family:'JetBrains Mono',monospace}
+.cf-copy{align-self:flex-start;background:var(--navy);color:rgba(255,255,255,.7);border:1px solid var(--border);border-radius:4px;padding:4px 12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;margin-top:2px}
+.cf-copy:hover{background:var(--gold);color:#fff;border-color:var(--gold)}
+.cf-copy.copied{background:#1a4a1a;color:#69db7c;border-color:#69db7c}
+
+/* CARD DIVIDER */
+.card-divider{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--amber);padding:6px 0 2px;border-top:1px solid var(--border);margin-top:4px;font-family:'JetBrains Mono',monospace}
+.card-divider:first-child{border-top:none;margin-top:0}
+
+/* FOOTER */
+footer{background:var(--navy);border-top:2px solid var(--gold);padding:28px;text-align:center}
+footer a{color:var(--gold);text-decoration:none}
+footer a:hover{text-decoration:underline}
+.ft-credit{font-size:11px;color:rgba(255,255,255,.35);margin-top:8px;font-family:'JetBrains Mono',monospace}
+
+@media(max-width:900px){
+  .sec-body{grid-template-columns:1fr}
+  .shot-col{border-right:none;border-bottom:1px solid var(--border)}
+  .content-col{max-height:none}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-in">
+    <div style="display:flex;align-items:center;gap:14px">
+      <div class="hdr-logo">DEV<br>NOTES</div>
+      <div>
+        <div class="hdr-title">BadgeStore Australia — pSEO Category Pages · Dev Notes</div>
+        <div class="hdr-sub">Content reference for all primary category pages · screenshots + copy frames for every changing element</div>
+      </div>
+    </div>
+    <div class="hdr-links">
+      <a href="https://github.com/seobiopse/bas-website-revamped" target="_blank" class="hdr-link">⎇ GitHub Repo ↗</a>
+      <a href="https://seobiopse.github.io/bas-website-revamped/" target="_blank" class="hdr-link">🌐 Live Site ↗</a>
+      <select class="hdr-link" onchange="if(this.value) switchCat(this.value)" style="background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); color:rgba(255,255,255,.75); padding:6px 24px 6px 12px; font-size:11px; font-family:'Plus Jakarta Sans',sans-serif; border-radius:5px; cursor:pointer; outline:none; -webkit-appearance:none; appearance:none; background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www%2eW3%2eorg/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22white%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><polyline points=%226 9 12 15 18 9%22></polyline></svg>'); background-repeat:no-repeat; background-position:right 8px center;">
+        <option value="">📋 Quick Navigation...</option>
+        ${Object.keys(ProductCatalog.categories).map(catKey => {
+            const cat = ProductCatalog.categories[catKey];
+            return `<option value="${cat.slug}">${cat.name}</option>`;
+        }).join('')}
+      </select>
+    </div>
+  </div>
+</header>
+
+<div class="tab-bar">
+  <div class="tab-bar-in">
+    ${Object.keys(ProductCatalog.categories).map((catKey, idx) => {
+        const cat = ProductCatalog.categories[catKey];
+        return `<button class="cat-tab ${idx === 0 ? 'on' : ''}" data-cat="${cat.slug}" onclick="switchCat('${cat.slug}')">${cat.name}</button>`;
+    }).join('\n')}
+  </div>
+</div>
+
+<main class="main">
+`;
+
+// Dynamic page content generation
+Object.keys(ProductCatalog.categories).forEach(catKey => {
+    const cat = ProductCatalog.categories[catKey];
+    
+    // Build JSON-LD unified schema
+    const schemaJson = JSON.stringify(compileUnifiedSchema('category', cat), null, 2);
+    
+    // Build programmatic B2B semantic guide
+    const guideHtml = compileCategorySemanticGuide(cat);
+    
+    // Build SEO redesigned description elements
+    const seoArticleHtml = redesignCategoryDesc(cat, '../');
+    
+    // Build comparison table HTML
+    const comparisonTableHtml = compileComparisonTableHtml(cat);
+    
+    // Construct tab panel
+    devNotesHtml += `
+<div class="cat-page" id="page-\${cat.slug}">
+  <div class="page-url-bar">
+    <span class="purl-label">Live page URL</span>
+    <a href="https://seobiopse.github.io/bas-website-revamped/categories/\${cat.slug}.html" target="_blank" class="purl-link" style="color: var(--gold);">https://seobiopse.github.io/bas-website-revamped/categories/\${cat.slug}.html ↗</a>
+    <span class="purl-note">Click to open live page in new tab — verify each section matches content below</span>
+  </div>
+
+  <!-- SECTION 1: Meta Tags -->
+  <div class="sec-block">
+    <div class="sec-header">
+      <span class="sec-icon">①</span>
+      <span class="sec-label">Metadata &amp; Header Elements</span>
+    </div>
+    <div class="sec-body">
+      <div class="shot-col">
+        <div class="shot-label">HTML Head Tags Mockup</div>
+        <div class="mock-head-illustration" style="background: #231f20; border: 1px solid #30363d; border-radius: 6px; padding: 12px; font-family: monospace; font-size: 11px; color: #a5d6ff;">
+          <div style="color: #8b949e;">&lt;head&gt;</div>
+          <div style="padding-left: 12px; color: #ff7b72;">&lt;title&gt;<span style="color: #c9d1d9;">\${cat.metaTitle}</span>&lt;/title&gt;</div>
+          <div style="padding-left: 12px; color: #ff7b72;">&lt;meta <span style="color: #79c0ff;">name</span>="<span style="color: #a5d6ff;">description</span>" <span style="color: #79c0ff;">content</span>="..."&gt;</div>
+          <div style="padding-left: 12px; color: #ff7b72;">&lt;link <span style="color: #79c0ff;">rel</span>="<span style="color: #a5d6ff;">canonical</span>" <span style="color: #79c0ff;">href</span>="..."&gt;</div>
+          <div style="color: #8b949e;">&lt;/head&gt;</div>
+        </div>
+      </div>
+      <div class="content-col">
+        <div class="cf-wrap">
+          <div class="cf-label">Meta Title Tag</div>
+          <div class="cf-box" id="title-\${cat.slug}">\${cat.metaTitle}</div>
+          <button class="cf-copy" onclick="copyFrame('title-\${cat.slug}', this)">Copy</button>
+        </div>
+        <div class="cf-wrap">
+          <div class="cf-label">Meta Description</div>
+          <div class="cf-box" id="desc-\${cat.slug}">\${cat.metaDesc}</div>
+          <button class="cf-copy" onclick="copyFrame('desc-\${cat.slug}', this)">Copy</button>
+        </div>
+        <div class="cf-wrap">
+          <div class="cf-label">Canonical URL</div>
+          <div class="cf-box" id="canon-\${cat.slug}">https://www.badgestore.com.au/categories/\${cat.slug}.html</div>
+          <button class="cf-copy" onclick="copyFrame('canon-\${cat.slug}', this)">Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Hero Section -->
+  <div class="sec-block">
+    <div class="sec-header">
+      <span class="sec-icon">②</span>
+      <span class="sec-label">Hero Section Elements</span>
+    </div>
+    <div class="sec-body">
+      <div class="shot-col">
+        <div class="shot-label">Hero Component Mockup</div>
+        <div class="mock-hero" style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; color: #231f20;">
+          <div style="font-weight: 800; font-size: 14px; color: #ED1C24; margin-bottom: 6px;">\${cat.heading}</div>
+          <div style="font-size: 10px; color: #374151; line-height: 1.4; margin-bottom: 8px;">\${cat.desc}</div>
+          <button style="background: #ED1C24; color: #FFF; font-size: 9px; padding: 4px 8px; border: none; border-radius: 4px; font-weight: bold; cursor: default;">DIY Badges</button>
+        </div>
+      </div>
+      <div class="content-col">
+        <div class="cf-wrap">
+          <div class="cf-label">H1 Heading</div>
+          <div class="cf-box" id="h1-\${cat.slug}">\${cat.heading}</div>
+          <button class="cf-copy" onclick="copyFrame('h1-\${cat.slug}', this)">Copy</button>
+        </div>
+        <div class="cf-wrap">
+          <div class="cf-label">Hero Intro Text</div>
+          <div class="cf-box" id="intro-\${cat.slug}">\${cat.desc}</div>
+          <button class="cf-copy" onclick="copyFrame('intro-\${cat.slug}', this)">Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: SEO Description Redesigned Elements -->
+  <div class="sec-block">
+    <div class="sec-header">
+      <span class="sec-icon">③</span>
+      <span class="sec-label">SEO Description Redesigned Components</span>
+    </div>
+    <div class="sec-body">
+      <div class="shot-col">
+        <div class="shot-label">SEO Component Layout Mockup</div>
+        <div style="font-size: 11px; color: #8b949e; line-height: 1.4;">
+          This contains the responsive, high-aesthetic layout featuring hero showcase block, swatches grid, and backing clip cards.
+        </div>
+      </div>
+      <div class="content-col">
+        <div class="cf-wrap">
+          <div class="cf-label">SEO Description HTML Block</div>
+          <div class="cf-box" id="seo-desc-\${cat.slug}" style="font-size: 11px; max-height: 250px; overflow-y: auto; white-space: pre-wrap;">\${seoArticleHtml.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+          <button class="cf-copy" onclick="copyFrame('seo-desc-\${cat.slug}', this)">Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: Structured Metadata Schema (JSON-LD) -->
+  <div class="sec-block">
+    <div class="sec-header">
+      <span class="sec-icon">④</span>
+      <span class="sec-label">JSON-LD Unified Schema Graph</span>
+    </div>
+    <div class="sec-body">
+      <div class="shot-col">
+        <div class="shot-label">JSON-LD Placement</div>
+        <div style="font-size: 11px; color: #8b949e; line-height: 1.4;">
+          This structured graph integrates LocalBusiness, Organization, MerchantReturnPolicy, CollectionPage, ItemList, and FAQPage schemas into a unified, search-engine ready JSON payload.
+        </div>
+      </div>
+      <div class="content-col">
+        <div class="cf-wrap">
+          <div class="cf-label">Schema Graph Code Block</div>
+          <div class="cf-box" id="schema-\${cat.slug}" style="font-size: 11px; max-height: 250px; overflow-y: auto;">\${schemaJson}</div>
+          <button class="cf-copy" onclick="copyFrame('schema-\${cat.slug}', this)">Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: Programmatic B2B Guide -->
+  <div class="sec-block">
+    <div class="sec-header">
+      <span class="sec-icon">⑤</span>
+      <span class="sec-label">Programmatic B2B Semantic Guide</span>
+    </div>
+    <div class="sec-body">
+      <div class="shot-col">
+        <div class="shot-label">Programmatic Layout</div>
+        <div style="font-size: 11px; color: #8b949e; line-height: 1.4;">
+          Calculates category starting prices, lists variant USPs dynamically, and details materials, compliance, and South Australian dispatch logistics to scale SEO value.
+        </div>
+      </div>
+      <div class="content-col">
+        <div class="cf-wrap">
+          <div class="cf-label">Semantic Guide HTML Block</div>
+          <div class="cf-box" id="guide-\${cat.slug}" style="font-size: 11px; max-height: 250px; overflow-y: auto; white-space: pre-wrap;">\${guideHtml}</div>
+          <button class="cf-copy" onclick="copyFrame('guide-\${cat.slug}', this)">Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: AEO/GEO Comparison Table -->
+  <div class="sec-block">
+    <div class="sec-header">
+      <span class="sec-icon">⑥</span>
+      <span class="sec-label">AEO/GEO Comparison Table</span>
+    </div>
+    <div class="sec-body">
+      <div class="shot-col">
+        <div class="shot-label">Table Component Layout Mockup</div>
+        <div style="font-size: 11px; color: #8b949e; line-height: 1.4;">
+          This comparison table maps key variant specs, material types, and benefits in a clean tabular grid.
+        </div>
+      </div>
+      <div class="content-col">
+        <div class="cf-wrap">
+          <div class="cf-label">Comparison Table HTML Block</div>
+          <div class="cf-box" id="comp-table-\${cat.slug}" style="font-size: 11px; max-height: 250px; overflow-y: auto; white-space: pre-wrap;">\${comparisonTableHtml.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+          <button class="cf-copy" onclick="copyFrame('comp-table-\${cat.slug}', this)">Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 7: FAQs -->
+  <div class="sec-block">
+    <div class="sec-header">
+      <span class="sec-icon">⑦</span>
+      <span class="sec-label">Frequently Asked Questions (FAQ list)</span>
+    </div>
+    <div class="sec-body">
+      <div class="shot-col">
+        <div class="shot-label">FAQ Accordion Mockup</div>
+        <div class="mock-faq" style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; color: #231f20; font-size: 11px;">
+          \${cat.faqs.slice(0, 2).map((faq, fIdx) => \`
+            <div style="border-bottom: 1px solid #f3f4f6; padding: 6px 0; font-weight: bold; color: #231f20;">Q: \${faq.q}</div>
+            <div style="padding: 6px 0; color: #6b7280; font-size: 10px; line-height: 1.3;">A: \&nbsp;\${faq.a.substring(0, 80)}...</div>
+          \`).join('')}
+        </div>
+      </div>
+      <div class="content-col">
+        \${cat.faqs.map((faq, fIdx) => \`
+          <div class="card-divider">FAQ \${fIdx + 1}</div>
+          <div class="cf-wrap">
+            <div class="cf-label">Question</div>
+            <div class="cf-box" id="faq-q-\${fIdx}-\${cat.slug}">\${faq.q}</div>
+            <button class="cf-copy" onclick="copyFrame('faq-q-\${fIdx}-\${cat.slug}', this)">Copy</button>
+          </div>
+          <div class="cf-wrap">
+            <div class="cf-label">Answer</div>
+            <div class="cf-box" id="faq-a-\${fIdx}-\${cat.slug}">\${faq.a}</div>
+            <button class="cf-copy" onclick="copyFrame('faq-a-\${fIdx}-\${cat.slug}', this)">Copy</button>
+          </div>
+        \`).join('')}
+      </div>
+    </div>
+  </div>
+</div>
+`;
+});
+
+devNotesHtml += `
+</main>
+
+<footer>
+  <div style="font-size:13px;color:rgba(255,255,255,.6)">BadgeStore Australia pSEO Dev Notes · <a href="https://github.com/seobiopse/bas-website-revamped" target="_blank">GitHub Repo</a> · <a href="https://seobiopse.github.io/bas-website-revamped/" target="_blank">Live Site</a></div>
+  <div class="ft-credit">Girish Kumar G &nbsp;|&nbsp; Programmatic SEO Manager &nbsp;|&nbsp; Father of SEO</div>
+</footer>
+
+<script>
+function switchCat(key) {
+  document.querySelectorAll('.cat-page').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('on'));
+  const page = document.getElementById('page-' + key);
+  if (page) page.classList.add('on');
+  document.querySelectorAll('.cat-tab').forEach(t => {
+    if (t.getAttribute('data-cat') === key) t.classList.add('on');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function copyFrame(id, btn) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const text = el.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// Init first tab
+const firstTabKey = "\${ProductCatalog.categories[Object.keys(ProductCatalog.categories)[0]].slug}";
+switchCat(firstTabKey);
+</script>
+
+</body>
+</html>
+`;
+
+fs.writeFileSync(path.join(__dirname, 'dev-handoff-note-2.html'), devNotesHtml, 'utf8');
+fs.writeFileSync(path.join(__dirname, '..', 'dev-handoff-note-2.html'), devNotesHtml, 'utf8');
+console.log('Compiled Developer Handoff Notes successfully!');
 
 console.log('Compilation completed successfully!');
