@@ -1550,15 +1550,14 @@ Object.keys(ProductCatalog.categories).forEach(catKey => {
     // Build SEO redesigned description elements
     const seoArticleHtml = redesignCategoryDesc(cat, '../');
     
-    // Build comparison table HTML
     const comparisonTableHtml = compileComparisonTableHtml(cat);
     
     // Construct tab panel
     devNotesHtml += `
-<div class="cat-page" id="page-\${cat.slug}">
+<div class="cat-page" id="page-${cat.slug}">
   <div class="page-url-bar">
     <span class="purl-label">Live page URL</span>
-    <a href="https://seobiopse.github.io/bas-website-revamped/categories/\${cat.slug}.html" target="_blank" class="purl-link" style="color: var(--gold);">https://seobiopse.github.io/bas-website-revamped/categories/\${cat.slug}.html ↗</a>
+    <a href="https://seobiopse.github.io/bas-website-revamped/categories/${cat.slug}.html" target="_blank" class="purl-link" style="color: var(--gold);">https://seobiopse.github.io/bas-website-revamped/categories/${cat.slug}.html ↗</a>
     <span class="purl-note">Click to open live page in new tab — verify each section matches content below</span>
   </div>
 
@@ -1573,7 +1572,7 @@ Object.keys(ProductCatalog.categories).forEach(catKey => {
         <div class="shot-label">HTML Head Tags Mockup</div>
         <div class="mock-head-illustration" style="background: #231f20; border: 1px solid #30363d; border-radius: 6px; padding: 12px; font-family: monospace; font-size: 11px; color: #a5d6ff;">
           <div style="color: #8b949e;">&lt;head&gt;</div>
-          <div style="padding-left: 12px; color: #ff7b72;">&lt;title&gt;<span style="color: #c9d1d9;">\${cat.metaTitle}</span>&lt;/title&gt;</div>
+          <div style="padding-left: 12px; color: #ff7b72;">&lt;title&gt;<span style="color: #c9d1d9;">${cat.metaTitle}</span>&lt;/title&gt;</div>
           <div style="padding-left: 12px; color: #ff7b72;">&lt;meta <span style="color: #79c0ff;">name</span>="<span style="color: #a5d6ff;">description</span>" <span style="color: #79c0ff;">content</span>="..."&gt;</div>
           <div style="padding-left: 12px; color: #ff7b72;">&lt;link <span style="color: #79c0ff;">rel</span>="<span style="color: #a5d6ff;">canonical</span>" <span style="color: #79c0ff;">href</span>="..."&gt;</div>
           <div style="color: #8b949e;">&lt;/head&gt;</div>
@@ -1582,18 +1581,18 @@ Object.keys(ProductCatalog.categories).forEach(catKey => {
       <div class="content-col">
         <div class="cf-wrap">
           <div class="cf-label">Meta Title Tag</div>
-          <div class="cf-box" id="title-\${cat.slug}">\${cat.metaTitle}</div>
-          <button class="cf-copy" onclick="copyFrame('title-\${cat.slug}', this)">Copy</button>
+          <div class="cf-box" id="title-${cat.slug}">${cat.metaTitle}</div>
+          <button class="cf-copy" onclick="copyFrame('title-${cat.slug}', this)">Copy</button>
         </div>
         <div class="cf-wrap">
           <div class="cf-label">Meta Description</div>
-          <div class="cf-box" id="desc-\${cat.slug}">\${cat.metaDesc}</div>
-          <button class="cf-copy" onclick="copyFrame('desc-\${cat.slug}', this)">Copy</button>
+          <div class="cf-box" id="desc-${cat.slug}">${cat.metaDesc}</div>
+          <button class="cf-copy" onclick="copyFrame('desc-${cat.slug}', this)">Copy</button>
         </div>
         <div class="cf-wrap">
           <div class="cf-label">Canonical URL</div>
-          <div class="cf-box" id="canon-\${cat.slug}">https://www.badgestore.com.au/categories/\${cat.slug}.html</div>
-          <button class="cf-copy" onclick="copyFrame('canon-\${cat.slug}', this)">Copy</button>
+          <div class="cf-box" id="canon-${cat.slug}">https://www.badgestore.com.au/categories/${cat.slug}.html</div>
+          <button class="cf-copy" onclick="copyFrame('canon-${cat.slug}', this)">Copy</button>
         </div>
       </div>
     </div>
@@ -1609,21 +1608,21 @@ Object.keys(ProductCatalog.categories).forEach(catKey => {
       <div class="shot-col">
         <div class="shot-label">Hero Component Mockup</div>
         <div class="mock-hero" style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; color: #231f20;">
-          <div style="font-weight: 800; font-size: 14px; color: #ED1C24; margin-bottom: 6px;">\${cat.heading}</div>
-          <div style="font-size: 10px; color: #374151; line-height: 1.4; margin-bottom: 8px;">\${cat.desc}</div>
+          <div style="font-weight: 800; font-size: 14px; color: #ED1C24; margin-bottom: 6px;">${cat.heading}</div>
+          <div style="font-size: 10px; color: #374151; line-height: 1.4; margin-bottom: 8px;">${cat.desc}</div>
           <button style="background: #ED1C24; color: #FFF; font-size: 9px; padding: 4px 8px; border: none; border-radius: 4px; font-weight: bold; cursor: default;">DIY Badges</button>
         </div>
       </div>
       <div class="content-col">
         <div class="cf-wrap">
           <div class="cf-label">H1 Heading</div>
-          <div class="cf-box" id="h1-\${cat.slug}">\${cat.heading}</div>
-          <button class="cf-copy" onclick="copyFrame('h1-\${cat.slug}', this)">Copy</button>
+          <div class="cf-box" id="h1-${cat.slug}">${cat.heading}</div>
+          <button class="cf-copy" onclick="copyFrame('h1-${cat.slug}', this)">Copy</button>
         </div>
         <div class="cf-wrap">
           <div class="cf-label">Hero Intro Text</div>
-          <div class="cf-box" id="intro-\${cat.slug}">\${cat.desc}</div>
-          <button class="cf-copy" onclick="copyFrame('intro-\${cat.slug}', this)">Copy</button>
+          <div class="cf-box" id="intro-${cat.slug}">${cat.desc}</div>
+          <button class="cf-copy" onclick="copyFrame('intro-${cat.slug}', this)">Copy</button>
         </div>
       </div>
     </div>
@@ -1645,8 +1644,8 @@ Object.keys(ProductCatalog.categories).forEach(catKey => {
       <div class="content-col">
         <div class="cf-wrap">
           <div class="cf-label">SEO Description HTML Block</div>
-          <div class="cf-box" id="seo-desc-\${cat.slug}" style="font-size: 11px; max-height: 250px; overflow-y: auto; white-space: pre-wrap;">\${seoArticleHtml.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
-          <button class="cf-copy" onclick="copyFrame('seo-desc-\${cat.slug}', this)">Copy</button>
+          <div class="cf-box" id="seo-desc-${cat.slug}" style="font-size: 11px; max-height: 250px; overflow-y: auto; white-space: pre-wrap;">${seoArticleHtml.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+          <button class="cf-copy" onclick="copyFrame('seo-desc-${cat.slug}', this)">Copy</button>
         </div>
       </div>
     </div>
@@ -1668,8 +1667,8 @@ Object.keys(ProductCatalog.categories).forEach(catKey => {
       <div class="content-col">
         <div class="cf-wrap">
           <div class="cf-label">Schema Graph Code Block</div>
-          <div class="cf-box" id="schema-\${cat.slug}" style="font-size: 11px; max-height: 250px; overflow-y: auto;">\${schemaJson}</div>
-          <button class="cf-copy" onclick="copyFrame('schema-\${cat.slug}', this)">Copy</button>
+          <div class="cf-box" id="schema-${cat.slug}" style="font-size: 11px; max-height: 250px; overflow-y: auto;">${schemaJson}</div>
+          <button class="cf-copy" onclick="copyFrame('schema-${cat.slug}', this)">Copy</button>
         </div>
       </div>
     </div>
@@ -1691,8 +1690,8 @@ Object.keys(ProductCatalog.categories).forEach(catKey => {
       <div class="content-col">
         <div class="cf-wrap">
           <div class="cf-label">Semantic Guide HTML Block</div>
-          <div class="cf-box" id="guide-\${cat.slug}" style="font-size: 11px; max-height: 250px; overflow-y: auto; white-space: pre-wrap;">\${guideHtml}</div>
-          <button class="cf-copy" onclick="copyFrame('guide-\${cat.slug}', this)">Copy</button>
+          <div class="cf-box" id="guide-${cat.slug}" style="font-size: 11px; max-height: 250px; overflow-y: auto; white-space: pre-wrap;">${guideHtml}</div>
+          <button class="cf-copy" onclick="copyFrame('guide-${cat.slug}', this)">Copy</button>
         </div>
       </div>
     </div>
@@ -1714,8 +1713,8 @@ Object.keys(ProductCatalog.categories).forEach(catKey => {
       <div class="content-col">
         <div class="cf-wrap">
           <div class="cf-label">Comparison Table HTML Block</div>
-          <div class="cf-box" id="comp-table-\${cat.slug}" style="font-size: 11px; max-height: 250px; overflow-y: auto; white-space: pre-wrap;">\${comparisonTableHtml.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
-          <button class="cf-copy" onclick="copyFrame('comp-table-\${cat.slug}', this)">Copy</button>
+          <div class="cf-box" id="comp-table-${cat.slug}" style="font-size: 11px; max-height: 250px; overflow-y: auto; white-space: pre-wrap;">${comparisonTableHtml.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+          <button class="cf-copy" onclick="copyFrame('comp-table-${cat.slug}', this)">Copy</button>
         </div>
       </div>
     </div>
@@ -1731,26 +1730,26 @@ Object.keys(ProductCatalog.categories).forEach(catKey => {
       <div class="shot-col">
         <div class="shot-label">FAQ Accordion Mockup</div>
         <div class="mock-faq" style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; color: #231f20; font-size: 11px;">
-          \${cat.faqs.slice(0, 2).map((faq, fIdx) => \`
-            <div style="border-bottom: 1px solid #f3f4f6; padding: 6px 0; font-weight: bold; color: #231f20;">Q: \${faq.q}</div>
-            <div style="padding: 6px 0; color: #6b7280; font-size: 10px; line-height: 1.3;">A: \&nbsp;\${faq.a.substring(0, 80)}...</div>
-          \`).join('')}
+          ${cat.faqs.slice(0, 2).map((faq, fIdx) => `
+            <div style="border-bottom: 1px solid #f3f4f6; padding: 6px 0; font-weight: bold; color: #231f20;">Q: ${faq.q}</div>
+            <div style="padding: 6px 0; color: #6b7280; font-size: 10px; line-height: 1.3;">A: &nbsp;${faq.a.substring(0, 80)}...</div>
+          `).join('')}
         </div>
       </div>
       <div class="content-col">
-        \${cat.faqs.map((faq, fIdx) => \`
-          <div class="card-divider">FAQ \${fIdx + 1}</div>
+        ${cat.faqs.map((faq, fIdx) => `
+          <div class="card-divider">FAQ ${fIdx + 1}</div>
           <div class="cf-wrap">
             <div class="cf-label">Question</div>
-            <div class="cf-box" id="faq-q-\${fIdx}-\${cat.slug}">\${faq.q}</div>
-            <button class="cf-copy" onclick="copyFrame('faq-q-\${fIdx}-\${cat.slug}', this)">Copy</button>
+            <div class="cf-box" id="faq-q-${fIdx}-${cat.slug}">${faq.q}</div>
+            <button class="cf-copy" onclick="copyFrame('faq-q-${fIdx}-${cat.slug}', this)">Copy</button>
           </div>
           <div class="cf-wrap">
             <div class="cf-label">Answer</div>
-            <div class="cf-box" id="faq-a-\${fIdx}-\${cat.slug}">\${faq.a}</div>
-            <button class="cf-copy" onclick="copyFrame('faq-a-\${fIdx}-\${cat.slug}', this)">Copy</button>
+            <div class="cf-box" id="faq-a-${fIdx}-${cat.slug}">${faq.a}</div>
+            <button class="cf-copy" onclick="copyFrame('faq-a-${fIdx}-${cat.slug}', this)">Copy</button>
           </div>
-        \`).join('')}
+        `).join('')}
       </div>
     </div>
   </div>
@@ -1800,7 +1799,7 @@ function copyFrame(id, btn) {
 }
 
 // Init first tab
-const firstTabKey = "\${ProductCatalog.categories[Object.keys(ProductCatalog.categories)[0]].slug}";
+const firstTabKey = "${ProductCatalog.categories[Object.keys(ProductCatalog.categories)[0]].slug}";
 switchCat(firstTabKey);
 </script>
 
