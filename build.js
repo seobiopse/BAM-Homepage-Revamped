@@ -19,14 +19,222 @@ function compileBreadcrumbs(list, rootPath = '../') {
             return `<li><span aria-current="page">${item}</span></li>`;
         }
         if (item === 'Home') {
-            return `<li><a href="${rootPath}index.html">Home</a></li>`;
+            return `<li><a href="${rootPath}index.html" title="Go back to the homepage" aria-label="Navigate to home page">Home</a></li>`;
         }
         // Map category name to filename
         const categorySlug = Object.keys(ProductCatalog.categories).find(
             key => ProductCatalog.categories[key].name === item
         );
-        return `<li><a href="${rootPath}categories/${categorySlug}.html">${item}</a></li>`;
+        return `<li><a href="${rootPath}categories/${categorySlug}.html" title="Go back to ${item} collection" aria-label="Navigate to ${item} page">${item}</a></li>`;
     }).join('\n');
+}
+
+// Unified Schema Generator incorporating shared business entities, return policy, shipping settings, and Q&As
+function compileUnifiedSchema(pageType, pageData) {
+    const organization = {
+        "@type": "Organization",
+        "@id": "https://www.badgestore.com.au/#organization",
+        "name": "BadgeStore",
+        "legalName": "BadgeStore Australia",
+        "url": "https://www.badgestore.com.au/",
+        "logo": "https://cdn11.bigcommerce.com/s-5ghsl7hcw4/content/img/badgestore logo new-01.svg",
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+61-1300-862-637",
+            "contactType": "customer service",
+            "email": "admin@badgestore.com.au",
+            "areaServed": "AU",
+            "availableLanguage": "en"
+        }
+    };
+
+    const localBusiness = {
+        "@type": "LocalBusiness",
+        "@id": "https://www.badgestore.com.au/#localbusiness",
+        "name": "BadgeStore Office",
+        "image": "https://cdn11.bigcommerce.com/s-5ghsl7hcw4/images/stencil/original/carousel/18/banner-3.jpg",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "56 Prospect Rd",
+            "addressLocality": "Prospect",
+            "addressRegion": "SA",
+            "postalCode": "5082",
+            "addressCountry": "AU"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": -34.8912,
+            "longitude": 138.5991
+        },
+        "telephone": "1300862637"
+    };
+
+    const returnPolicy = {
+        "@type": "MerchantReturnPolicy",
+        "@id": "https://www.badgestore.com.au/#returnpolicy",
+        "name": "BadgeStore Returns Policy",
+        "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnPeriod",
+        "merchantReturnDays": 30,
+        "returnMethod": "https://schema.org/ReturnByMail",
+        "refundType": "https://schema.org/RefundFull"
+    };
+
+    const shippingPolicy = {
+        "@type": "ShippingRateSettings",
+        "@id": "https://www.badgestore.com.au/#shippingpolicy",
+        "name": "Standard Shipping Flat Rate",
+        "freeShippingThreshold": {
+            "@type": "MonetaryAmount",
+            "value": 100,
+            "currency": "AUD"
+        },
+        "shippingRate": {
+            "@type": "MonetaryAmount",
+            "value": 12.50,
+            "currency": "AUD"
+        }
+    };
+
+    const graph = [organization, localBusiness, returnPolicy, shippingPolicy];
+
+    if (pageType === 'category') {
+        const cat = pageData;
+        graph.push({
+            "@type": "CollectionPage",
+            "@id": `https://www.badgestore.com.au/categories/${cat.slug}.html#collection`,
+            "name": cat.heading,
+            "description": cat.metaDesc,
+            "url": `https://www.badgestore.com.au/categories/${cat.slug}.html`
+        });
+        graph.push({
+            "@type": "ItemList",
+            "itemListElement": cat.products.map((pRef, idx) => ({
+                "@type": "ListItem",
+                "position": idx + 1,
+                "url": `https://www.badgestore.com.au/products/${pRef.id}.html`,
+                "name": pRef.name
+            }))
+        });
+        if (cat.faqs && cat.faqs.length > 0) {
+            graph.push({
+                "@type": "FAQPage",
+                "@id": `https://www.badgestore.com.au/categories/${cat.slug}.html#faq`,
+                "mainEntity": cat.faqs.map(f => ({
+                    "@type": "Question",
+                    "name": f.q,
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": f.a
+                    }
+                }))
+            });
+        }
+    } else if (pageType === 'product') {
+        const prod = pageData;
+        graph.push({
+            "@type": "Product",
+            "@id": `https://www.badgestore.com.au/products/${prod.id}.html#product`,
+            "name": prod.name,
+            "image": prod.image,
+            "description": prod.description,
+            "sku": prod.sku,
+            "brand": {
+                "@type": "Brand",
+                "name": "BadgeStore"
+            },
+            "offers": {
+                "@type": "AggregateOffer",
+                "priceCurrency": "AUD",
+                "lowPrice": prod.priceBrackets[prod.priceBrackets.length - 1].price.toFixed(2),
+                "highPrice": prod.basePrice.toFixed(2),
+                "offerCount": prod.priceBrackets.length,
+                "url": `https://www.badgestore.com.au/products/${prod.id}.html`,
+                "priceValidUntil": "2027-12-31"
+            }
+        });
+        if (prod.faqs && prod.faqs.length > 0) {
+            graph.push({
+                "@type": "FAQPage",
+                "@id": `https://www.badgestore.com.au/products/${prod.id}.html#faq`,
+                "mainEntity": prod.faqs.map(f => ({
+                    "@type": "Question",
+                    "name": f.q,
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": f.a
+                    }
+                }))
+            });
+        }
+    }
+
+    return {
+        "@context": "https://schema.org",
+        "@graph": graph
+    };
+}
+
+// Programmatic Semantic Guide Builder to scale page content length to 1000+ words
+function compileSemanticGuide(cat) {
+    const name = cat.name;
+    const isLanyard = name.toLowerCase().includes('lanyard');
+    const isMachine = name.toLowerCase().includes('machine');
+    const isBadge = name.toLowerCase().includes('badge');
+
+    let specificText = '';
+    if (isLanyard) {
+        specificText = `When ordering custom lanyards, width selection is key for legibility and comfort. We offer 10mm, 15mm, 20mm, and 25mm polyester and woven options. Our default safety breakaway clips snap open under tension to prevent choking hazards in hospital, retail, or warehouse zones.`;
+    } else if (isMachine) {
+        specificText = `Our industrial button maker machines are machined from high-grade carbon steel with robust alloy dies. Ideal for school fundraisers, corporate marketing, and retail merchandising, each machine supports interchangeable dies to stamp 25mm, 32mm, or 57mm pins.`;
+    } else if (isBadge) {
+        specificText = `Every personalized name badge is available with dual neodymium magnets or heavy-duty safety pins. The double magnetic backing clamps tightly without damaging shirt threads, making it the perfect option for corporate attire, though employees with pacemakers should utilize traditional pins.`;
+    } else {
+        specificText = `Our premium commercial signage and identification collections are manufactured to strict industrial standards to ensure high legibility and scanability in professional reception desks, administrative suites, or business boardrooms.`;
+    }
+
+    return `
+    <div class="seo-semantic-guide" style="margin-top: 40px; border-top: 1px solid var(--color-border); padding-top: 40px; text-align: left;">
+        <h3 style="font-size: 1.4rem; color: var(--color-secondary); margin-bottom: 16px;">Comprehensive B2B Ordering &amp; Specifications Guide</h3>
+        
+        <div class="guide-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 24px;">
+            <div class="guide-col">
+                <h4 style="font-size: 1.05rem; color: var(--color-secondary); margin-bottom: 10px;">1. Professional Manufacture &amp; Material Specs</h4>
+                <p style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6; margin-bottom: 14px;">
+                    At BadgeStore Australia, our corporate badges and identification items are crafted using commercial-grade raw materials. ${specificText} Laser engraving utilizes precise CO2 lasers for crisp, high-contrast borders and lettering, while full-color prints are protected under scratch-resistant domes.
+                </p>
+                <p style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6;">
+                    Wood products are finished using organic Adelaide beeswax to bring out natural mahogany and walnut timber grains. Anodised metals and acrylic plates utilize UV-resistant inks preventing color degradation over time under direct exposure.
+                </p>
+            </div>
+            
+            <div class="guide-col">
+                <h4 style="font-size: 1.05rem; color: var(--color-secondary); margin-bottom: 10px;">2. Corporate Purchase Orders &amp; Invoicing</h4>
+                <p style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6; margin-bottom: 14px;">
+                    We support streamlined accounts workflows for larger enterprises and public institutions. BadgeStore accepts official Purchase Orders (PO) with net-30 billing cycles from Australian schools, hospitals, local councils, and federal government offices.
+                </p>
+                <p style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6;">
+                    Our programmatic static database supports bulk pricing scaling. Simply select your wholesale tiers during configuration, or submit an email query to our support desk for custom franchise quotes.
+                </p>
+            </div>
+        </div>
+
+        <div class="guide-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+            <div class="guide-col">
+                <h4 style="font-size: 1.05rem; color: var(--color-secondary); margin-bottom: 10px;">3. Safety Compliance &amp; Attachment Options</h4>
+                <p style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6;">
+                    Safety is paramount in busy team environments. Neodymium magnets offer high clamping force without damaging garments, but traditional pins, pocket alligator clips, and swivel loops are also provided as secure alternatives. Safety breakaway neck clips are pre-fitted on all custom lanyards to ensure immediate release under sudden tension.
+                </p>
+            </div>
+            
+            <div class="guide-col">
+                <h4 style="font-size: 1.05rem; color: var(--color-secondary); margin-bottom: 10px;">4. Adelaide Local Dispatch &amp; Logistics</h4>
+                <p style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6;">
+                    Orders are manufactured and dispatched from our local facility in Prospect, South Australia. Deliveries are processed through Australia Post and local couriers. Timelines exclude Sundays: Local Adelaide Metro (1-2 days priority, 2-3 days standard), East Coast Metro (2-3 days express, 4-5 days standard), and Remote WA/NT/TAS (3-5 days express, 6-8 days standard).
+                </p>
+            </div>
+        </div>
+    </div>
+    `;
 }
 
 // Helper to convert absolute links to local relative ones
@@ -318,7 +526,7 @@ function compileNavigation(rootPath) {
             // Renders with dropdown chevron and dropdown menu
             html += `
             <li class="nav-item has-dropdown">
-                <a href="${rootPath}categories/${cat.slug}.html" class="nav-link">
+                <a href="${rootPath}categories/${cat.slug}.html" class="nav-link" title="Explore custom ${cat.name} range" aria-label="Browse the ${cat.name} collection">
                     ${cat.name}
                     <svg class="dropdown-chevron" width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -328,19 +536,19 @@ function compileNavigation(rootPath) {
             
             subCats.forEach(sub => {
                 html += `
-                    <li><a href="${rootPath}categories/${sub.slug}.html">${sub.name}</a></li>`;
+                    <li><a href="${rootPath}categories/${sub.slug}.html" title="Explore custom ${sub.name}" aria-label="Explore the ${sub.name} sub-category">${sub.name}</a></li>`;
             });
             
             html += `
                     <li class="dropdown-divider" style="border-top: 1px solid var(--color-border); margin: 6px 0; list-style: none;"></li>
-                    <li><a href="${rootPath}categories/${cat.slug}.html" class="view-all-link" style="font-weight: 700; color: var(--color-primary);">Shop All ${cat.name} &rarr;</a></li>
+                    <li><a href="${rootPath}categories/${cat.slug}.html" class="view-all-link" title="Shop all custom ${cat.name} products" aria-label="View the entire ${cat.name} selection" style="font-weight: 700; color: var(--color-primary);">Shop All ${cat.name} &rarr;</a></li>
                 </ul>
             </li>`;
         } else {
             // Renders as a simple direct link, NO dropdown
             html += `
             <li class="nav-item">
-                <a href="${rootPath}categories/${cat.slug}.html" class="nav-link">
+                <a href="${rootPath}categories/${cat.slug}.html" class="nav-link" title="Shop custom ${cat.name}" aria-label="Browse the ${cat.name} collection">
                     ${cat.name}
                 </a>
             </li>`;
@@ -367,12 +575,12 @@ function compileMobileNavigation(rootPath) {
         const cat = ProductCatalog.categories[catKey];
         html += `
         <li class="mobile-nav-item">
-            <a href="${rootPath}categories/${cat.slug}.html" class="mobile-nav-link">${cat.name}</a>
+            <a href="${rootPath}categories/${cat.slug}.html" class="mobile-nav-link" title="Explore custom ${cat.name} range" aria-label="Browse the ${cat.name} collection">${cat.name}</a>
         </li>`;
     });
     
     html += `
-        <li><a href="${rootPath}index.html#designer" class="btn btn-primary" style="margin-top: 10px; color: #FFFFFF;">Launch Configurator</a></li>
+        <li><a href="${rootPath}index.html#designer" class="btn btn-primary" title="Launch custom BadgeStore Interactive Designer tool" aria-label="Launch interactive designer tool" style="margin-top: 10px; color: #FFFFFF;">Launch Configurator</a></li>
     </ul>`;
     return html;
 }
@@ -389,12 +597,12 @@ function compileCategoryGrid() {
         gridHtml += `
         <div class="category-card">
             <div class="cat-image-holder" style="height: 180px; padding: 24px; background-color: var(--color-bg-surface); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--color-border); overflow: hidden;">
-                <img src="${imageUrl}" alt="${cat.name}" class="category-grid-img" loading="lazy" style="max-width: 100%; max-height: 100%; object-fit: contain; transition: var(--transition-smooth);">
+                <img src="${imageUrl}" alt="Browse custom range of ${cat.name} online" title="${cat.name} - BadgeStore Australia" class="category-grid-img" loading="lazy" style="max-width: 100%; max-height: 100%; object-fit: contain; transition: var(--transition-smooth);">
             </div>
             <div class="cat-body" style="padding: 24px; display: flex; flex-direction: column; gap: 12px; flex: 1;">
                 <h3 style="font-size: 1.2rem;">${cat.name}</h3>
                 <p style="font-size: 0.85rem; color: var(--color-text-muted); line-height: 1.5;">${cat.desc}</p>
-                <a href="categories/${cat.slug}.html" class="cat-link" style="font-family: var(--font-heading); font-size: 0.9rem; font-weight: 700; color: var(--color-primary); margin-top: auto; display: inline-flex; align-items: center;">Shop ${cat.name} &rarr;</a>
+                <a href="categories/${cat.slug}.html" class="cat-link" title="Shop custom ${cat.name} collection" aria-label="Browse the entire ${cat.name} category" style="font-family: var(--font-heading); font-size: 0.9rem; font-weight: 700; color: var(--color-primary); margin-top: auto; display: inline-flex; align-items: center;">Shop ${cat.name} &rarr;</a>
             </div>
         </div>
         `;
@@ -481,13 +689,13 @@ Object.keys(ProductCatalog.categories).forEach(catKey => {
         productGridHtml += `
         <article class="card">
             <div class="card-image-holder" style="height: 180px; padding: 16px; background-color: var(--color-bg-surface); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--color-border); overflow: hidden;">
-                <img src="${prod.image}" alt="${prod.name}" class="product-card-image" loading="lazy" style="max-width: 100%; max-height: 100%; object-fit: contain; transition: var(--transition-smooth);">
+                <img src="${prod.image}" alt="Buy Custom ${prod.name} online from BadgeStore" title="${prod.name} | BadgeStore Australia" class="product-card-image" loading="lazy" style="max-width: 100%; max-height: 100%; object-fit: contain; transition: var(--transition-smooth);">
             </div>
             <div class="card-body">
-                <h3 class="card-title"><a href="../products/${prod.id}.html">${prod.name}</a></h3>
+                <h3 class="card-title"><a href="../products/${prod.id}.html" title="Configure and customize your own ${prod.name}" aria-label="Configure ${prod.name}">${prod.name}</a></h3>
                 <div class="card-price-row">
                     <span class="price-val">${prod.priceRange}</span>
-                    <a href="../products/${prod.id}.html" class="btn btn-secondary btn-sm">Configure</a>
+                    <a href="../products/${prod.id}.html" class="btn btn-secondary btn-sm" title="Configure custom ${prod.name} layout" aria-label="Start custom configuration tool for ${prod.name}">Configure</a>
                 </div>
             </div>
         </article>
@@ -495,8 +703,20 @@ Object.keys(ProductCatalog.categories).forEach(catKey => {
     });
     html = html.replace(/{{productGrid}}/g, productGridHtml);
 
-    // SEO Rich Article
-    const seoArticleHtml = redesignCategoryDesc(cat, '../');
+    // Get showcase image for OG tags
+    const firstProdRef = cat.products[0];
+    const firstProd = firstProdRef ? ProductCatalog.products[firstProdRef.id] : null;
+    const showcaseImg = firstProd ? firstProd.image : 'https://cdn11.bigcommerce.com/s-5ghsl7hcw4/images/stencil/original/carousel/18/banner-3.jpg';
+
+    // Populate SEO / Canonical / OG / Twitter Card Placeholders
+    html = html.replace(/{{canonicalUrl}}/g, `https://www.badgestore.com.au/categories/${cat.slug}.html`);
+    html = html.replace(/{{ogType}}/g, 'website');
+    html = html.replace(/{{ogImage}}/g, showcaseImg);
+    html = html.replace(/{{ogImageAlt}}/g, `Premium Custom ${cat.name} range by BadgeStore Australia`);
+
+    // SEO Rich Article + Semantic B2B specifications guide (scaling word count past 1000 words)
+    let seoArticleHtml = redesignCategoryDesc(cat, '../');
+    seoArticleHtml += compileSemanticGuide(cat);
     html = html.replace(/{{seoArticle}}/g, seoArticleHtml);
 
     // Comparison Table
@@ -548,29 +768,9 @@ Object.keys(ProductCatalog.categories).forEach(catKey => {
     });
     html = html.replace(/{{faqList}}/g, faqListHtml);
 
-    // Schema Graphs
-    const catSchema = {
-        "@context": "https://schema.org",
-        "@graph": [
-            {
-                "@type": "CollectionPage",
-                "@id": `https://www.badgestore.com.au/categories/${cat.slug}.html#collection`,
-                "name": cat.heading,
-                "description": cat.metaDesc,
-                "url": `https://www.badgestore.com.au/categories/${cat.slug}.html`
-            },
-            {
-                "@type": "ItemList",
-                "itemListElement": cat.products.map((pRef, idx) => ({
-                    "@type": "ListItem",
-                    "position": idx + 1,
-                    "url": `https://www.badgestore.com.au/products/${pRef.id}.html`,
-                    "name": pRef.name
-                }))
-            }
-        ]
-    };
-    html = html.replace(/{{schemaGraph}}/g, JSON.stringify(catSchema, null, 2));
+    // Dynamic Unified Schema Graph (Organization + LocalBusiness + FAQPage + CollectionPage + ItemList)
+    const unifiedSchema = compileUnifiedSchema('category', cat);
+    html = html.replace(/{{schemaGraph}}/g, JSON.stringify(unifiedSchema, null, 2));
 
     // Save final html
     const categoryDir = path.join(__dirname, 'categories');
@@ -591,6 +791,10 @@ Object.keys(ProductCatalog.products).forEach(prodKey => {
     // Head / Meta
     html = html.replace(/{{metaTitle}}/g, prod.metaTitle);
     html = html.replace(/{{metaDesc}}/g, prod.metaDesc);
+    html = html.replace(/{{canonicalUrl}}/g, `https://www.badgestore.com.au/products/${prod.id}.html`);
+    html = html.replace(/{{ogType}}/g, 'product');
+    html = html.replace(/{{ogImage}}/g, prod.image);
+    html = html.replace(/{{ogImageAlt}}/g, `Configure and Buy Custom ${prod.name} online from BadgeStore Australia`);
 
     // Navigation Menus
     html = html.replace(/{{navMenu}}/g, compileNavigation('../'));
@@ -1044,34 +1248,9 @@ Object.keys(ProductCatalog.products).forEach(prodKey => {
     html = html.replace(/{{formControls}}/g, formControlsHtml);
     html = html.replace(/{{previewerMarkup}}/g, previewerMarkupHtml);
 
-    // Schema Graphs
-    const prodSchema = {
-        "@context": "https://schema.org",
-        "@graph": [
-            {
-                "@type": "Product",
-                "@id": `https://www.badgestore.com.au/products/${prod.id}.html#product`,
-                "name": prod.name,
-                "image": "https://cdn11.bigcommerce.com/s-5ghsl7hcw4/content/img/badgestore%20logo%20new-01.svg",
-                "description": prod.description,
-                "sku": prod.sku,
-                "brand": {
-                    "@type": "Brand",
-                    "name": "BadgeStore"
-                },
-                "offers": {
-                    "@type": "AggregateOffer",
-                    "priceCurrency": "AUD",
-                    "lowPrice": prod.priceBrackets[prod.priceBrackets.length - 1].price.toFixed(2),
-                    "highPrice": prod.basePrice.toFixed(2),
-                    "offerCount": prod.priceBrackets.length,
-                    "url": `https://www.badgestore.com.au/products/${prod.id}.html`,
-                    "priceValidUntil": "2027-12-31"
-                }
-            }
-        ]
-    };
-    html = html.replace(/{{schemaGraph}}/g, JSON.stringify(prodSchema, null, 2));
+    // Dynamic Unified Schema Graph (Organization + LocalBusiness + FAQPage + Product)
+    const unifiedSchema = compileUnifiedSchema('product', prod);
+    html = html.replace(/{{schemaGraph}}/g, JSON.stringify(unifiedSchema, null, 2));
 
     // Save final html
     const productDir = path.join(__dirname, 'products');
@@ -1084,6 +1263,12 @@ Object.keys(ProductCatalog.products).forEach(prodKey => {
 // 3. GENERATE HOMEPAGE
 console.log('Compiling homepage: index.html');
 let indexHtml = indexTemplate;
+indexHtml = indexHtml.replace(/{{metaTitle}}/g, 'Custom Name Badges Australia | Badge Store Redesign');
+indexHtml = indexHtml.replace(/{{metaDesc}}/g, 'Buy Custom Name Badges Online in Australia. Premium engraved, domed, wood, and metal name badges. Fast turnaround, no minimum orders, and damage-free magnetic attachments.');
+indexHtml = indexHtml.replace(/{{canonicalUrl}}/g, 'https://www.badgestore.com.au/index.html');
+indexHtml = indexHtml.replace(/{{ogType}}/g, 'website');
+indexHtml = indexHtml.replace(/{{ogImage}}/g, 'https://cdn11.bigcommerce.com/s-5ghsl7hcw4/images/stencil/original/carousel/18/banner-3.jpg');
+indexHtml = indexHtml.replace(/{{ogImageAlt}}/g, 'BadgeStore Australia - Premium Custom Name Badges');
 indexHtml = indexHtml.replace(/{{navMenu}}/g, compileNavigation(''));
 indexHtml = indexHtml.replace(/{{mobileNavMenu}}/g, compileMobileNavigation(''));
 indexHtml = indexHtml.replace(/{{categoryGrid}}/g, compileCategoryGrid());
